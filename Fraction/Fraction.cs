@@ -10,7 +10,7 @@ namespace FractionLibrary
     /// Can be compared with integers, doubles and fractions.
     /// Can be used within its own constructors for simplified writing of recursive behaviour.
     /// </summary>
-    public class Fraction : IComparable<Fraction>, IComparable<BigInteger>
+    public class Fraction : IComparable<Fraction>, IComparable<BigInteger>, IEquatable<Fraction>
     {
         #region Properties
         private BigInteger numerator;
@@ -77,6 +77,12 @@ namespace FractionLibrary
 
             Numerator = num;
             Denominator = den;
+        }
+
+        public Fraction(Fraction frac)
+        {
+            Numerator = frac.Numerator;
+            Denominator = frac.Denominator;
         }
 
         /// <summary>
@@ -176,7 +182,7 @@ namespace FractionLibrary
             {
                 ans = this.Pow(-1 * n);
             }
-            else if(n == 1)
+            else if (n == 1)
             {
                 ans = this;
             }
@@ -184,6 +190,7 @@ namespace FractionLibrary
             return ans.Simplify();
         }
 
+        //TODO: Implement
         /// <summary>
         /// Returns a fractional approximation of a root.
         /// Prints exact roots if they are found in the given depth.
@@ -192,16 +199,17 @@ namespace FractionLibrary
         /// <returns></returns>
         public Fraction Sqrt(int depth)
         {
-            Fraction top = this - 1;
-            Fraction ans = new Fraction(1, 1);
-            Fraction start = top / 2;
-            Fraction last = start;
-            for (int i = 1; i < depth; i++)
-            {
-                last = top / (2 + last);
-            }
-            ans += last;
-            return ans;
+            throw new NotImplementedException();
+            //Fraction top = this - 1;
+            //Fraction ans = new Fraction(1, 1);
+            //Fraction start = top / 2;
+            //Fraction last = start;
+            //for (int i = 1; i < depth; i++)
+            //{
+            //    last = top / (2 + last);
+            //}
+            //ans += last;
+            //return ans;
         }
         #endregion
 
@@ -335,8 +343,36 @@ namespace FractionLibrary
                 }
             }
         }
-        #endregion
 
+
+        #endregion
+        #region Equals
+        public bool Equals(Fraction other)
+        {
+            return this.Numerator == other.Numerator && this.Denominator == other.Denominator;
+        }
+
+        //HACK Equals override to prevent stupid behavior in unittesting.
+        /// <summary>
+        /// Stops the Assert.AreEqual from defying logic.
+        /// Why would I want to do the same as with Assert.AreSame????
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public override bool Equals(object obj)
+        {
+            if (obj is Fraction)
+            {
+                return this.Equals(obj as Fraction);
+            }
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return this.ToString().GetHashCode();
+        }
+        #endregion
         #endregion
     }
 }
