@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.352
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fractions", "Fractions\Fractions.csproj", "{D8080531-3E82-4660-9B99-6299806485BC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fraction", "Fraction\Fraction.csproj", "{77A2499A-485D-4D89-BBD5-0B822B664392}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D8080531-3E82-4660-9B99-6299806485BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8080531-3E82-4660-9B99-6299806485BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8080531-3E82-4660-9B99-6299806485BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8080531-3E82-4660-9B99-6299806485BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77A2499A-485D-4D89-BBD5-0B822B664392}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77A2499A-485D-4D89-BBD5-0B822B664392}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77A2499A-485D-4D89-BBD5-0B822B664392}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77A2499A-485D-4D89-BBD5-0B822B664392}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CF701037-1661-48AB-9F16-C6277027B556}
+	EndGlobalSection
+EndGlobal
