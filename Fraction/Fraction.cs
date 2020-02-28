@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Numerics;
 
-namespace Fractions
+namespace FractionLibrary
 {
     /// <summary>
     /// A class that provides fractions to calculate with.
     /// Allows using the default arithmetic operators on members of this class.
-    /// Can be used in its own constructor.
+    /// The sign is always on the Numerator.
+    /// Can be compared with integers, doubles and fractions.
+    /// Can be used within its own constructors for simplified writing of recursive behaviour.
     /// </summary>
-    class Fraction : IComparable<Fraction>,IComparable<BigInteger>
+    public class Fraction : IComparable<Fraction>, IComparable<BigInteger>
     {
         #region Properties
-        private static readonly Fraction identity = new Fraction(1, 1);
         private BigInteger numerator;
         private BigInteger denominator;
-
+        public static Fraction Identity { get; } = new Fraction(1, 1);
         /// <summary>
         /// The Nominator of the fraction.
         /// </summary>
@@ -52,7 +53,7 @@ namespace Fractions
             }
         }
 
-        public static Fraction Identity => identity;
+
         #endregion
 
         #region Constructors
@@ -60,44 +61,44 @@ namespace Fractions
         /// Default Constructor.
         /// Creates a fraction object. A denominator of 0 will throw a divide by zero exception.
         /// </summary>
-        /// <param name="a">Numerator</param>
-        /// <param name="b">Denominator</param>
-        public Fraction(BigInteger a, BigInteger b)
+        /// <param name="num">Numerator</param>
+        /// <param name="den">Denominator</param>
+        public Fraction(BigInteger num, BigInteger den)
         {
-            if (b == 0)
+            if (den == 0)
             {
-                throw new DivideByZeroException($"Can't divide by zero. {b} is zero");
+                throw new DivideByZeroException($"Can't divide by zero. {den} is zero");
             }
-            if (b < 0)
+            if (den < 0)
             {
-                a *= -1;
-                b *= -1;
+                num *= -1;
+                den *= -1;
             }
 
-            Numerator = a;
-            Denominator = b;
+            Numerator = num;
+            Denominator = den;
         }
 
         /// <summary>
         /// Creates a fraction object. A denominator of 0 will throw a divide by zero exception.
         /// </summary>
-        /// <param name="a">Numerator</param>
-        /// <param name="b">Denominator</param>
-        public Fraction(BigInteger a, Fraction b)
+        /// <param name="num">Numerator</param>
+        /// <param name="den">Denominator</param>
+        public Fraction(BigInteger num, Fraction den)
         {
-            if (b.Numerator == 0)
+            if (den.Numerator == 0)
             {
-                throw new DivideByZeroException($"Can't divide by zero. {b} is zero");
+                throw new DivideByZeroException($"Can't divide by zero. {den} is zero");
             }
-            ////If the bottomside is negative, change the sign of both sides so that only the topside can be negative.
+            //OLD //If the bottomside is negative, change the sign of both sides so that only the topside can be negative.
             //if (b.Numerator < 0)
             //{
             //    a *= -1;
             //    b.Numerator *= -1;
             //}
 
-            Fraction ans = new Fraction(a, 1);
-            ans /= b;
+            Fraction ans = new Fraction(num, 1);
+            ans /= den;
             Numerator = ans.Numerator;
             Denominator = ans.Denominator;
         }
@@ -105,13 +106,13 @@ namespace Fractions
         /// <summary>
         /// Creates a fraction object. A denominator of 0 will throw a divide by zero exception.
         /// </summary>
-        /// <param name="a">Numerator</param>
-        /// <param name="b">Denominator</param>
-        public Fraction(Fraction a, BigInteger b)
+        /// <param name="num">Numerator</param>
+        /// <param name="den">Denominator</param>
+        public Fraction(Fraction num, BigInteger den)
         {
-            if (b == 0)
+            if (den == 0)
             {
-                throw new DivideByZeroException($"Can't divide by zero. {b} is zero");
+                throw new DivideByZeroException($"Can't divide by zero. {den} is zero");
             }
             ////If the bottomside is negative, change the sign of both sides so that only the topside can be negative.
             //if (b < 0)
@@ -120,8 +121,8 @@ namespace Fractions
             //    b *= -1;
             //}
 
-            Fraction ans = new Fraction(1, b);
-            ans = a * ans;
+            Fraction ans = new Fraction(1, den);
+            ans = num * ans;
             Numerator = ans.Numerator;
             Denominator = ans.Denominator;
         }
@@ -129,15 +130,15 @@ namespace Fractions
         /// <summary>
         /// Creates a fraction object. A denominator of 0 will throw a divide by zero exception. 
         /// </summary>
-        /// <param name="a">Numerator</param>
-        /// <param name="b">Denominator</param>
-        public Fraction(Fraction a, Fraction b)
+        /// <param name="num">Numerator</param>
+        /// <param name="den">Denominator</param>
+        public Fraction(Fraction num, Fraction den)
         {
-            if (b.Numerator == 0)
+            if (den.Numerator == 0)
             {
-                throw new DivideByZeroException($"Can't divide by zero. {b} is zero");
+                throw new DivideByZeroException($"Can't divide by zero. {den} is zero");
             }
-            Fraction ans = a / b;
+            Fraction ans = num / den;
             Numerator = ans.Numerator;
             Denominator = ans.Denominator;
         }
@@ -163,7 +164,7 @@ namespace Fractions
         /// </summary>
         /// <param name="n"></param>
         /// <returns></returns>
-        public Fraction Pow(long n)
+        public Fraction Pow(int n)
         {
             Fraction ans = Identity;
 
@@ -175,7 +176,7 @@ namespace Fractions
             {
                 ans = this.Pow(-1 * n);
             }
-            else
+            else if(n == 1)
             {
                 ans = this;
             }
@@ -184,7 +185,8 @@ namespace Fractions
         }
 
         /// <summary>
-        /// 
+        /// Returns a fractional approximation of a root.
+        /// Prints exact roots if they are found in the given depth.
         /// </summary>
         /// <param name="depth">The precision or depth that the root function should go.</param>
         /// <returns></returns>
@@ -198,7 +200,7 @@ namespace Fractions
             {
                 last = top / (2 + last);
             }
-            ans = ans + last;
+            ans += last;
             return ans;
         }
         #endregion
@@ -210,11 +212,11 @@ namespace Fractions
 
         public static Fraction operator +(Fraction a, BigInteger b) => new Fraction(a.Numerator + a.Denominator * b, a.Denominator);
         public static Fraction operator +(BigInteger a, Fraction b) => new Fraction(b.Numerator + a * b.Denominator, b.Denominator);
-
+        //public static double operator +(double a, Fraction b) => a + (double)b.Numerator / (double)b.Denominator;
         #endregion
         #region subtract
         public static Fraction operator -(Fraction a, Fraction b)
-            => new Fraction(a.Numerator * b.Denominator - a.Denominator * b.Numerator, a.Denominator * b.Denominator);
+            => new Fraction(a.Numerator * b.Denominator - a.Denominator * b.Denominator, a.Denominator * b.Denominator);
         public static Fraction operator -(Fraction a, BigInteger b) => new Fraction(a.Numerator - a.Denominator * b, a.Denominator);
 
         public static Fraction operator -(BigInteger a, Fraction b) => new Fraction(b.Numerator - a * b.Denominator, b.Denominator);
@@ -226,11 +228,34 @@ namespace Fractions
         public static Fraction operator *(BigInteger a, Fraction b) => b * a;
         #endregion
         #region divide
+        /// <summary>
+        /// Divides a fraction with a fraction.
+        /// </summary>
+        /// <param name="a">Fraction</param>
+        /// <param name="b">Fraction</param>
+        /// <returns>Fraction</returns>
         public static Fraction operator /(Fraction a, Fraction b) => a * ~b;
+        /// <summary>
+        /// Divides a fraction with an integer.
+        /// </summary>
+        /// <param name="a">Fraction</param>
+        /// <param name="b">(Big)Integer</param>
+        /// <returns>Fraction</returns>
         public static Fraction operator /(Fraction a, BigInteger b) => new Fraction(a.Numerator, a.Denominator * b);
+        /// <summary>
+        /// Divides an integer with a fraction.
+        /// </summary>
+        /// <param name="a">(Big)Integer</param>
+        /// <param name="b">Fraction</param>
+        /// <returns>Fraction</returns>
         public static Fraction operator /(BigInteger a, Fraction b) => ~b * a;
         #endregion
         #region Unary
+        /// <summary>
+        /// Inverts a fraction.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <returns></returns>
         public static Fraction operator ~(Fraction a) => new Fraction(a.denominator, a.numerator);
         #endregion
         #endregion
@@ -255,85 +280,7 @@ namespace Fractions
         /// <returns></returns>
         public override string ToString() => $"({this.Numerator} / {this.Denominator})";
 
-        #region Compare
-        /// <summary>
-        /// Compares a fraction object with another fraction object.
-        /// Returns a not implemented exception if the object type has not been implemented.
-        /// Some types can also return a not supported exception. (double.NaN)
-        /// </summary>
-        /// <param name="obj">Fraction, BigInteger, decimal or double</param>
-        /// <returns></returns>
-        public int CompareTo(object obj)
-        {
-            if (obj is BigInteger || obj is long || obj is int || obj is short || obj is byte)
-            {
-                BigInteger integer = (BigInteger)obj;
-                BigInteger div = this.Numerator / this.Denominator;
-                if (div != integer)
-                {
-                    BigInteger diff = div - integer;
-                    //If the difference between the two is not 0, return the sign.
-                    return diff.Sign;
-                }
-                else
-                {
-                    BigInteger rem = this.Numerator % this.Denominator;
-                    //If the remainder is greater then 0 the fraction is larger.
-                    return (rem > 0) ? 1 : 0;
-                }
-            }
-            else if (obj is decimal)
-            {
-                decimal frac = (decimal)this.Numerator / (decimal)this.Denominator;
-
-                decimal dec = (decimal)obj;
-
-                decimal diff = frac - dec;
-
-                if (diff == 0)
-                {
-                    return 0;
-                }
-                else
-                {
-                    return (diff > 0) ? 1 : -1;
-                }
-            }
-            else if (obj is double || obj is float)
-            {
-                BigInteger div = this.Numerator / this.Denominator;
-                int sign = div.Sign;
-                double number = (double)obj;
-                try
-                {
-                    BigInteger num = (BigInteger)number;
-                    if (div.CompareTo(num) == 0)
-                    {
-                        return div.CompareTo(number);
-                    }
-                    else
-                    {
-                        return div.CompareTo(num);
-                    }
-                }
-                catch (OverflowException)
-                {
-
-                    if (double.IsNaN(number))
-                    {
-                        throw new NotSupportedException("Can't compare with NaN");
-                    }
-                    else
-                    {
-                        return number.CompareTo(sign);
-                    }
-                }
-            }
-            else
-            {
-                throw new NotImplementedException($"Cannot compare {obj.GetType()} with Fraction");
-            }
-        }
+        #region CompareTo
         public int CompareTo(Fraction fraction)
         {
             BigInteger divA = this.Numerator / this.Denominator;
@@ -370,18 +317,22 @@ namespace Fractions
         }
         public int CompareTo(BigInteger other)
         {
-            BigInteger div = this.Numerator / this.Denominator;
-            if (div != other)
+            BigInteger frac = Numerator / Denominator;
+            if (frac != other)
             {
-                BigInteger diff = div - other;
-                //If the difference between the two is not 0, return the sign.
-                return diff.Sign;
+                return (frac - other).Sign;
             }
             else
             {
-                BigInteger rem = this.Numerator % this.Denominator;
-                //If the remainder is greater then 0 the fraction is larger.
-                return (rem > 0) ? 1 : 0;
+                BigInteger rem = Numerator % Denominator;
+                if (rem == 0)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return 1;
+                }
             }
         }
         #endregion
