@@ -14,9 +14,18 @@ namespace FractionLibrary
     /// </summary>
     public struct Fraction : IComparable<Fraction>, IComparable<BigInteger>, IEquatable<Fraction>
     {
+        #region Conversions
+        // Implicit Convserions
         public static implicit operator Fraction(BigInteger b) => new Fraction(b, 1);
         public static implicit operator Fraction(int i) => new Fraction(i, 1);
+
+        //HACK: We do not really need this implicit conversion since it will not be used.
+        //public static implicit operator Fraction(long l) => new Fraction(l, 1);
+
+        // Explicit conversions
         public static explicit operator BigInteger(Fraction f) => f.Numerator / f.Denominator;
+        public static explicit operator double(Fraction f) => (double)f.Numerator / (double)f.Denominator;
+        #endregion
 
         #region Properties
         private BigInteger numerator;
@@ -102,12 +111,6 @@ namespace FractionLibrary
             {
                 throw new DivideByZeroException($"Can't divide by zero. {den} is zero");
             }
-            //OLD //If the bottomside is negative, change the sign of both sides so that only the topside can be negative.
-            //if (b.Numerator < 0)
-            //{
-            //    a *= -1;
-            //    b.Numerator *= -1;
-            //}
 
             Fraction ans = new Fraction(num, 1);
             ans /= den;
@@ -156,7 +159,7 @@ namespace FractionLibrary
         }
 
         /// <summary>
-        /// Approximates a fraction with a given sequence.
+        /// Approximates a fraction with a given (repeating?) sequence.
         /// </summary>
         /// <param name="continuedFractions">The sequence of denominators in the continued fraction.</param>
         /// <param name="steps">The amount of steps to execute the continued fration.</param>
@@ -563,6 +566,7 @@ namespace FractionLibrary
 
 
         #endregion
+
         #region Equals
         public bool Equals(Fraction other)
         {
