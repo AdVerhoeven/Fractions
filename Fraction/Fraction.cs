@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 
 namespace FractionLibrary
@@ -10,8 +12,12 @@ namespace FractionLibrary
     /// Can be compared with integers, doubles and fractions.
     /// Can be used within its own constructors for simplified writing of recursive behaviour.
     /// </summary>
-    public class Fraction : IComparable<Fraction>, IComparable<BigInteger>, IEquatable<Fraction>
+    public struct Fraction : IComparable<Fraction>, IComparable<BigInteger>, IEquatable<Fraction>
     {
+        public static implicit operator Fraction(BigInteger b) => new Fraction(b, 1);
+        public static implicit operator Fraction(int i) => new Fraction(i, 1);
+        public static explicit operator BigInteger(Fraction f) => f.Numerator / f.Denominator;
+
         #region Properties
         private BigInteger numerator;
         private BigInteger denominator;
@@ -75,14 +81,14 @@ namespace FractionLibrary
                 den *= -1;
             }
 
-            Numerator = num;
-            Denominator = den;
+            numerator = num;
+            denominator = den;
         }
 
         public Fraction(Fraction frac)
         {
-            Numerator = frac.Numerator;
-            Denominator = frac.Denominator;
+            numerator = frac.Numerator;
+            denominator = frac.Denominator;
         }
 
         /// <summary>
@@ -105,8 +111,8 @@ namespace FractionLibrary
 
             Fraction ans = new Fraction(num, 1);
             ans /= den;
-            Numerator = ans.Numerator;
-            Denominator = ans.Denominator;
+            numerator = ans.Numerator;
+            denominator = ans.Denominator;
         }
 
         /// <summary>
@@ -129,8 +135,8 @@ namespace FractionLibrary
 
             Fraction ans = new Fraction(1, den);
             ans = num * ans;
-            Numerator = ans.Numerator;
-            Denominator = ans.Denominator;
+            numerator = ans.Numerator;
+            denominator = ans.Denominator;
         }
 
         /// <summary>
@@ -145,8 +151,42 @@ namespace FractionLibrary
                 throw new DivideByZeroException($"Can't divide by zero. {den} is zero");
             }
             Fraction ans = num / den;
-            Numerator = ans.Numerator;
-            Denominator = ans.Denominator;
+            numerator = ans.Numerator;
+            denominator = ans.Denominator;
+        }
+
+        /// <summary>
+        /// Approximates a fraction with a given sequence.
+        /// </summary>
+        /// <param name="continuedFractions">The sequence of denominators in the continued fraction.</param>
+        /// <param name="steps">The amount of steps to execute the continued fration.</param>
+        public Fraction(Dictionary<int, List<int>> continuedFractions, int steps)
+        {
+            int initial = continuedFractions.First().Key;
+            List<int> period = continuedFractions.First().Value;
+            int periodLength = period.Count;
+
+            Fraction r = Fraction.Identity;
+            if (steps == 0)
+            {
+                r = new Fraction(initial, 1);
+            }
+            else
+            {
+                steps--;
+                r = new Fraction(1, period[steps % periodLength]);
+                while (steps > 0)
+                {
+                    //a + 1/r
+                    steps--;
+                    r = 1 / (period[steps % periodLength] + r);
+                    //r = period[steps % periodLength] + new Fraction(1/r); 
+                }
+                r = (initial + r);
+            }
+
+            numerator = r.Numerator;
+            denominator = r.Denominator;
         }
         #endregion
 
@@ -190,26 +230,183 @@ namespace FractionLibrary
             return ans.Simplify();
         }
 
-        //TODO: Implement
         /// <summary>
-        /// Returns a fractional approximation of a root.
-        /// Prints exact roots if they are found in the given depth.
+        /// Approximates as a Fraction to a double.
         /// </summary>
-        /// <param name="depth">The precision or depth that the root function should go.</param>
         /// <returns></returns>
-        public Fraction Sqrt(int depth)
+        public double Approximate()
         {
-            throw new NotImplementedException();
-            //Fraction top = this - 1;
-            //Fraction ans = new Fraction(1, 1);
-            //Fraction start = top / 2;
-            //Fraction last = start;
-            //for (int i = 1; i < depth; i++)
-            //{
-            //    last = top / (2 + last);
-            //}
-            //ans += last;
-            //return ans;
+            return (double)Numerator / (double)Denominator;
+        }
+
+        /// <summary>
+        /// Approximates a Fraction to a floating point string.
+        /// The brackets encapsulate the repeating sequence within the real/floating point number.
+        /// </summary>
+        /// <returns></returns>
+        public string ApproximateAsString()
+        {
+            //TODO: fix string limit?
+            return ApproximateAsString(1000);
+        }
+
+        /// <summary>
+        /// Approximates a Fraction to a floating point string.
+        /// The brackets encapsulate the repeating sequence within the real/floating point number.
+        /// </summary>
+        /// <param name="lim">The amount of digits behind the decimal point to be found.</param>
+        /// <returns>A floating point string.</returns>
+        public string ApproximateAsString(int lim)
+        {
+            string ans = string.Empty;
+            BigInteger numerator = this.Numerator;
+            BigInteger denominator = this.Denominator;
+            bool zero = false;
+            List<BigInteger> numerators = new List<BigInteger>();
+            while (numerator != 0)
+            {
+                if (numerator > denominator && !zero)
+                {
+                    BigInteger quotient = numerator / denominator;
+                    BigInteger rest = numerator % denominator;
+                    ans += quotient.ToString();
+                    numerator = rest;
+                }
+                if (zero)
+                {
+                    if (lim < 1)
+                    {
+                        break;
+                    }
+                    BigInteger quotient = (numerator * 10) / denominator;
+                    BigInteger rest = (numerator * 10) % denominator;
+                    ans += quotient.ToString();
+                    numerators.Add(numerator);
+                    numerator = rest;
+                    lim--;
+                }
+                if (numerator < denominator && !zero)
+                {
+                    if (ans == string.Empty)
+                    {
+                        ans = "0";
+                    }
+                    ans += ".";
+                    zero = true;
+                }
+            }
+            return ans;
+        }
+
+        //TODO: rewrite or overload to allow for rooting of fractions
+        public Dictionary<int, List<int>> SqrtAsContinuedFraction(int n)
+        {
+            Dictionary<int, List<int>> continuedFraction = new Dictionary<int, List<int>>();
+            //find a0, if this is the exact root, we're done
+            int an = 1;
+            while (an * an < n)
+            {
+                an++;
+            }
+            if (an * an == n)
+            {
+                continuedFraction.Add(an, new List<int>());
+                return continuedFraction;
+            }
+            else
+            {
+                an--;
+            }
+            int initial = an;
+            continuedFraction.Add(initial, new List<int>());
+            List<Tuple<int, int, int>> signatures = new List<Tuple<int, int, int>>();
+
+            //now we get into the repeating part
+            int mn = 0;
+            int dn = 1;
+            while (true)
+            {
+                int mn1 = dn * an - mn;
+                int dn1 = (n - (mn1 * mn1)) / dn;
+                int an1 = (initial + mn1) / dn1;
+                Tuple<int, int, int> newSignature = new Tuple<int, int, int>(an1, mn1, dn1);
+                if (signatures.Count > 0)
+                {
+                    if (signatures.Contains(newSignature))
+                    {
+                        return continuedFraction;
+                    }
+                    else
+                    {
+                        signatures.Add(newSignature);
+                        continuedFraction[initial].Add(an1);
+                    }
+                }
+                else
+                {
+                    signatures.Add(newSignature);
+                    continuedFraction[initial].Add(an1);
+                }
+                //the next a has been found, now we set up to find the new next
+                an = an1;
+                dn = dn1;
+                mn = mn1;
+            }
+        }
+
+        public Dictionary<Fraction, List<Fraction>> SqrtAsContinuedFraction(Fraction n)
+        {
+            Dictionary<Fraction, List<Fraction>> continuedFraction = new Dictionary<Fraction, List<Fraction>>();
+            //find a0, if this is the exact root, we're done
+            Fraction an = Fraction.Identity;
+            while (an * an < n)
+            {
+                an.Numerator += an.Denominator;
+            }
+            if (an * an == n)
+            {
+                continuedFraction.Add(an, new List<Fraction>());
+                return continuedFraction;
+            }
+            else
+            {
+                an.Numerator -= an.Denominator;
+            }
+            Fraction initial = an;
+            continuedFraction.Add(initial, new List<Fraction>());
+            List<Tuple<Fraction, Fraction, Fraction>> signatures = new List<Tuple<Fraction, Fraction, Fraction>>();
+
+            //now we get into the repeating part
+            Fraction mn = new Fraction(0, 1);
+            Fraction dn = Fraction.Identity;
+            while (true)
+            {
+                Fraction mn1 = dn * an - mn;
+                Fraction dn1 = (n - (mn1 * mn1)) / dn;
+                Fraction an1 = (initial + mn1) / dn1;
+                Tuple<Fraction, Fraction, Fraction> newSignature = new Tuple<Fraction, Fraction, Fraction>(an1, mn1, dn1);
+                if (signatures.Count > 0)
+                {
+                    if (signatures.Contains(newSignature))
+                    {
+                        return continuedFraction;
+                    }
+                    else
+                    {
+                        signatures.Add(newSignature);
+                        continuedFraction[initial].Add(an1);
+                    }
+                }
+                else
+                {
+                    signatures.Add(newSignature);
+                    continuedFraction[initial].Add(an1);
+                }
+                //the next a has been found, now we set up to find the new next
+                an = an1;
+                dn = dn1;
+                mn = mn1;
+            }
         }
         #endregion
 
@@ -265,6 +462,26 @@ namespace FractionLibrary
         /// <param name="a"></param>
         /// <returns></returns>
         public static Fraction operator ~(Fraction a) => new Fraction(a.denominator, a.numerator);
+
+        public static Fraction operator -(Fraction a) => new Fraction(a.numerator * -1, a.denominator);
+
+        public static Fraction operator +(Fraction a) => a;
+        #endregion
+        #region Comparison
+        public static bool operator ==(Fraction a, Fraction b)
+        {
+            return a.Equals(b);
+        }
+        public static bool operator !=(Fraction a, Fraction b) => !(a == b);
+        public static bool operator >(Fraction a, Fraction b)
+        {
+            var c = a - b;
+            //if a - b results in 0, it is false, otherwise return if a - b is larger than 0.
+            return c.Numerator != 0 ? c.Numerator > 0 : false;
+        }
+        public static bool operator <(Fraction a, Fraction b) => b > a;
+        public static bool operator >=(Fraction a, Fraction b) => a == b || a > b;
+        public static bool operator <=(Fraction a, Fraction b) => b >= a;
         #endregion
         #endregion
 
@@ -361,9 +578,9 @@ namespace FractionLibrary
         /// <returns></returns>
         public override bool Equals(object obj)
         {
-            if (obj is Fraction)
+            if (obj is Fraction frac)
             {
-                return this.Equals(obj as Fraction);
+                return this.Equals(frac);
             }
             return base.Equals(obj);
         }

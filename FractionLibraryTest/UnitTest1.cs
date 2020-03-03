@@ -63,18 +63,18 @@ namespace FractionLibraryTest
 
         //TODO: fix and test Sqrt() method
         //[TestMethod]
-        public void SqrtTest()
-        {
-            //Arrange
-            var expected = new Fraction(1, 2);
-            var toRoot = new Fraction(1, 4);
+        //public void SqrtTest()
+        //{
+        //    //Arrange
+        //    var expected = new Fraction(1, 2);
+        //    var toRoot = new Fraction(1, 4);
 
-            //Act
-            var actual = toRoot.Sqrt(10).Simplify();
+        //    //Act
+        //    var actual = toRoot.Sqrt(10).Simplify();
 
-            //Arrange
-            Assert.AreEqual(expected, actual);
-        }
+        //    //Arrange
+        //    Assert.AreEqual(expected, actual);
+        //}
 
         [TestMethod]
         public void InverseTest()
@@ -105,6 +105,17 @@ namespace FractionLibraryTest
             Assert.AreEqual(expected, actualMult);
             Assert.AreEqual(expected, actualDiv);
             Assert.AreEqual(expected, actualPow);
+        }
+
+        [TestMethod]
+        public void ImplicitBigIntegerTest()
+        {
+            BigInteger bigint = 20;
+            var expected = new Fraction(bigint, 1);
+
+            Fraction actual = bigint;
+
+            Assert.AreEqual(expected, actual);
         }
     }
 }
