@@ -37,8 +37,6 @@ namespace FractionLibraryTest
 
             //Assert            
             Assert.AreEqual(expected, actual);
-            //HACK AreEqual does not work on reference types.
-            //Assert.IsTrue(expected.Equals(actual));
         }
 
         [TestMethod]
@@ -62,19 +60,31 @@ namespace FractionLibraryTest
 
 
         //TODO: fix and test Sqrt() method
-        //[TestMethod]
-        //public void SqrtTest()
-        //{
-        //    //Arrange
-        //    var expected = new Fraction(1, 2);
-        //    var toRoot = new Fraction(1, 4);
+        [TestMethod]
+        public void SqrtTest()
+        {
+            //Arrange
+            var expected = new Fraction(2, 1);
 
-        //    //Act
-        //    var actual = toRoot.Sqrt(10).Simplify();
+            //Act
+            var actual = Fraction.Sqrt(4);
 
-        //    //Arrange
-        //    Assert.AreEqual(expected, actual);
-        //}
+            //Arrange
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void FracSqrtTest()
+        {
+            //Arrange
+            var expected = new Fraction(1,2);
+
+            //Act
+            var actual = Fraction.Sqrt(expected.Pow(2));
+
+            //Arrange
+            Assert.AreEqual(expected, actual);
+        }
 
         [TestMethod]
         public void InverseTest()
