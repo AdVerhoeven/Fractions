@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Numerics;
 using System.Text;
 
@@ -24,7 +25,8 @@ namespace FractionLibrary
 
         // Explicit conversions
         public static explicit operator BigInteger(Fraction f) => f.Numerator / f.Denominator;
-        public static explicit operator double(Fraction f) => (double)f.Numerator / (double)f.Denominator;
+        // a double has a limited precision of 15-17 decimal digits.
+        public static explicit operator double(Fraction f) => double.Parse(f.ApproximateAsString(17));
         #endregion
 
         #region Properties
@@ -245,7 +247,7 @@ namespace FractionLibrary
 
         #region Approximate Methods
         /// <summary>
-        /// Approximates as a Fraction to a double.
+        /// Approximates as a Fraction to a double. For full precision use the ApproximatePrecise() method.
         /// </summary>
         /// <returns></returns>
         public double Approximate()
@@ -255,7 +257,13 @@ namespace FractionLibrary
             {
                 return double.Parse(ApproximateAsString(10));
             }
-            return (double.IsNaN(t)) ? double.Parse(ApproximateAsString(12)) : t;
+            // A double has a limited precision of 15-17 decimal digits.
+            return (double.IsNaN(t)) ? double.Parse(ApproximateAsString(17)) : t;
+        }
+
+        public double ApproximatePrecise()
+        {
+            return double.Parse(ApproximateAsString(10));
         }
 
         /// <summary>
@@ -265,8 +273,8 @@ namespace FractionLibrary
         /// <returns></returns>
         public string ApproximateAsString()
         {
-            //HACK: Default limit of 1000 decimal digits.
-            return ApproximateAsString(1000);
+            //HACK: Default limit of 30 decimal digits.
+            return ApproximateAsString(30);
         }
 
         /// <summary>
@@ -311,8 +319,7 @@ namespace FractionLibrary
                     {
                         ans = "0";
                     }
-                    //TODO: Fix this stupid decimal separator.
-                    ans += ",";
+                    ans += CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
                     zero = true;
                 }
             }
@@ -328,8 +335,8 @@ namespace FractionLibrary
         /// <returns></returns>
         public static Fraction Sqrt(int n)
         {
-            //HACK: default precision of 1000, more can/could be achieved.
-            return new Fraction(SqrtAsContinuedFraction(n), 100);
+            //HACK: default precision of 30, more can/could be achieved.
+            return new Fraction(SqrtAsContinuedFraction(n), 30);
         }
 
         /// <summary>
@@ -397,15 +404,19 @@ namespace FractionLibrary
         /// <returns></returns>
         public static Fraction Sqrt(Fraction f)
         {
+            if (f.Numerator == f.Denominator)
+            {
+                return 1;
+            }
             try
             {
                 var num = Sqrt((int)f.Numerator);
                 var den = Sqrt((int)f.Denominator);
                 return new Fraction(num, den);
             }
-            catch(InvalidCastException ex)
+            catch (InvalidCastException ex)
             {
-                throw new OverflowException("");
+                throw new OverflowException($"This fraction has a numerator or denominator that is to big.", ex);
             }
         }
 
@@ -592,16 +603,11 @@ namespace FractionLibrary
         #region Equals
         public bool Equals(Fraction other)
         {
-            return this.Numerator == other.Numerator && this.Denominator == other.Denominator;
+            var simplified = this.Simplify();
+            var simplifiedOther = other.Simplify();
+            return simplified.Numerator == simplifiedOther.Numerator && simplified.Denominator == simplifiedOther.Denominator;
         }
 
-        //HACK Equals override to prevent stupid behavior in unittesting.
-        /// <summary>
-        /// Stops the Assert.AreEqual from defying logic.
-        /// Why would I want to do the same as with Assert.AreSame????
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
         public override bool Equals(object obj)
         {
             if (obj is Fraction frac)
