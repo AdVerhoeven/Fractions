@@ -482,12 +482,17 @@ namespace FractionLibrary
             return GCD(b % a, a);
         }
 
+        #region ToString
         /// <summary>
         /// Returns the fraction as "(a / b)"
         /// </summary>
         /// <returns></returns>
         public override string ToString() => $"({this.Numerator} / {this.Denominator})";
-
+        /// <summary>
+        /// Returns a fraction as "(a / b)" or "(a + b / c)"
+        /// </summary>
+        /// <param name="format">S = full integers separately</param>
+        /// <returns></returns>
         public string ToString(string format)
         {
             if (string.IsNullOrEmpty(format))
@@ -512,6 +517,14 @@ namespace FractionLibrary
                     throw new FormatException(String.Format("The {0} format string is not supported.", format));
             }
         }
+
+        public string ToString(string format, IFormatProvider formatProvider)
+        {
+            if(formatProvider == null)
+                return ToString(format);
+            throw new NotImplementedException();
+        }
+        #endregion
 
         #region CompareTo
         public int CompareTo(Fraction fraction)
@@ -593,12 +606,8 @@ namespace FractionLibrary
         {
             return this.ToString().GetHashCode();
         }
-
-        public string ToString(string format, IFormatProvider formatProvider)
-        {
-            throw new NotImplementedException();
-        }
         #endregion
+
         #endregion
     }
 }

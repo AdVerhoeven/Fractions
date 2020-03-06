@@ -15,7 +15,7 @@ namespace FractionConsole
             var rootThree = Fraction.Sqrt(3);
             Console.WriteLine(rootThree.Approximate());
             Console.WriteLine((rootThree * rootThree).Approximate());
-
+            Console.WriteLine(rootThree.ToString("s"));
 
             Console.ReadKey();
         }
