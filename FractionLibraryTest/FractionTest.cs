@@ -50,7 +50,7 @@ namespace FractionLibraryTest
                 fraction * fraction;
 
             //Act
-            var actual = fraction.Pow(5);
+            var actual = FracMath.Pow(fraction, 5);
 
             //Assert
             Assert.AreEqual(expected, actual);
@@ -65,7 +65,7 @@ namespace FractionLibraryTest
             var expected = new Fraction(2, 1);
 
             //Act
-            var actual = Fraction.Sqrt(4);
+            var actual = FracMath.Sqrt(4);
 
             //Assert
             Assert.AreEqual(expected, actual);
@@ -78,8 +78,8 @@ namespace FractionLibraryTest
             var expected = new Fraction(1, 2);
 
             //Act
-            var temp = new Fraction(1, 2).Pow(2);
-            var actual = Fraction.Sqrt(temp);
+            var temp = FracMath.Pow(new Fraction(1, 2), 2);
+            var actual = FracMath.Sqrt(temp);
 
             //Assert
             Assert.AreEqual(expected, actual);
@@ -106,15 +106,13 @@ namespace FractionLibraryTest
         public void FracSqrtTest(int n)
         {
             //Arrange
-            var expected = Fraction.Sqrt(new Fraction(1, n));
-            var expectedPreciseDouble = expected.ApproximatePrecise();
+            var expected = FracMath.Sqrt(new Fraction(1, n));
             // These two will fail to pass all the tests.
             //var expectedString = expected.ApproximateAsString();
             //var expectedDouble = expected.Approximate();
 
             //Act
-            var actual = new Fraction(Fraction.Sqrt(n), n);
-            var actualPreciseDouble = actual.ApproximatePrecise();
+            var actual = new Fraction(FracMath.Sqrt(n), n);
 
             // These two will fail to pass all the tests.
             //var actualString = actual.ApproximateAsString();            
@@ -122,7 +120,6 @@ namespace FractionLibraryTest
 
 
             //Assert
-            Assert.AreEqual(expectedPreciseDouble, actualPreciseDouble, "ApproximatePrecise()");
             Assert.AreEqual((double)expected, (double)actual, "(double)");
 
             // These two will fail to pass all the tests.
@@ -157,7 +154,7 @@ namespace FractionLibraryTest
             //Act
             var actualMult = Fraction.Identity * Fraction.Identity;
             var actualDiv = Fraction.Identity / Fraction.Identity;
-            var actualPow = Fraction.Identity.Pow(10);
+            var actualPow = FracMath.Pow(Fraction.Identity,10);
 
             //Assert
             Assert.AreEqual(expected, actualMult);

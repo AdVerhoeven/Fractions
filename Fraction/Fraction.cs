@@ -215,35 +215,7 @@ namespace FractionLibrary
             return ans;
         }
 
-        /// <summary>
-        /// Returns the n'th power of a Fraction.
-        /// </summary>
-        /// <param name="n"></param>
-        /// <returns></returns>
-        public Fraction Pow(int n)
-        {
-            Fraction ans;
 
-            if (n > 1)
-            {
-                ans = this * this.Pow(--n);
-            }
-            else if (n < 0)
-            {
-                ans = 1 / this.Pow(-1 * n);
-            }
-            else if (n == 1)
-            {
-                ans = this;
-            }
-            else
-            {
-                ans = Identity;
-            }
-
-            return ans.Simplify();
-        }
-        public static Fraction Pow(Fraction f, int n) => f.Pow(n);
 
         #region Approximate Methods
         /// <summary>
@@ -258,12 +230,7 @@ namespace FractionLibrary
                 return double.Parse(ApproximateAsString(10));
             }
             // A double has a limited precision of 15-17 decimal digits.
-            return (double.IsNaN(t)) ? double.Parse(ApproximateAsString(17)) : t;
-        }
-
-        public double ApproximatePrecise()
-        {
-            return double.Parse(ApproximateAsString(10));
+            return (double.IsNaN(t)) ? double.Parse(ApproximateAsString()) : t;
         }
 
         /// <summary>
@@ -293,6 +260,7 @@ namespace FractionLibrary
             List<BigInteger> numerators = new List<BigInteger>();
             while (numerator != 0)
             {
+                // Long divison
                 if (numerator > denominator && !zero)
                 {
                     BigInteger quotient = numerator / denominator;
@@ -300,6 +268,7 @@ namespace FractionLibrary
                     ans += quotient.ToString();
                     numerator = rest;
                 }
+                // Once we have calculated the whole numbers we get into this part.
                 if (zero)
                 {
                     if (lim < 1)
@@ -325,9 +294,204 @@ namespace FractionLibrary
             }
             return ans;
         }
+
         #endregion
 
 
+
+        #endregion
+
+        #region Operators
+        #region Arithmatic
+        public static Fraction operator +(Fraction a, Fraction b)
+
+            => new Fraction(a.numerator * b.denominator + b.numerator * a.denominator, a.denominator * b.denominator);
+        public static Fraction operator -(Fraction a, Fraction b)
+
+            => new Fraction(a.Numerator * b.Denominator - a.Denominator * b.Denominator, a.Denominator * b.Denominator);
+
+        public static Fraction operator *(Fraction a, Fraction b)
+
+            => new Fraction(a.Numerator * b.Numerator, a.Denominator * b.Denominator);
+
+        public static Fraction operator /(Fraction a, Fraction b) => a * ~b;
+        #endregion
+        #region Unary
+        /// <summary>
+        /// Inverts a fraction.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        public static Fraction operator ~(Fraction a) => new Fraction(a.denominator, a.numerator);
+
+        public static Fraction operator -(Fraction a) => new Fraction(a.numerator * -1, a.denominator);
+
+        public static Fraction operator +(Fraction a) => a;
+        #endregion
+        #region Comparison
+        public static bool operator ==(Fraction a, Fraction b)
+        {
+            return a.Equals(b);
+        }
+        public static bool operator !=(Fraction a, Fraction b) => !(a == b);
+        public static bool operator >(Fraction a, Fraction b)
+        {
+            var c = a - b;
+            //if a - b results in 0, it is false, otherwise return if a - b is larger than 0.
+            return c.Numerator != 0 ? c.Numerator > 0 : false;
+        }
+        public static bool operator <(Fraction a, Fraction b) => b > a;
+        public static bool operator >=(Fraction a, Fraction b) => a == b || a > b;
+        public static bool operator <=(Fraction a, Fraction b) => b >= a;
+        #endregion
+        #endregion
+
+        #region Helper Methods
+        /// <summary>
+        /// Returns the greatest common divisor of two integers.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        private static BigInteger GCD(BigInteger a, BigInteger b)
+        {
+            if (a == 0)
+                return b;
+            return GCD(b % a, a);
+        }
+
+        #region ToString
+        /// <summary>
+        /// Returns the fraction as "(a / b)"
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString() => $"({this.Numerator} / {this.Denominator})";
+        /// <summary>
+        /// Returns a fraction as "(a / b)" or "(a + b / c)"
+        /// </summary>
+        /// <param name="format">S = full integers separately</param>
+        /// <returns></returns>
+        public string ToString(string format)
+        {
+            if (string.IsNullOrEmpty(format))
+                return this.ToString();
+
+            switch (format.ToUpperInvariant())
+            {
+                case "G":
+                case "F":
+                    return this.ToString();
+                case "S":
+                    var sb = new StringBuilder();
+                    sb.Append('(');
+                    sb.Append(this.Numerator / this.Denominator);
+                    sb.Append(" + ");
+                    sb.Append(this.Numerator % this.Denominator);
+                    sb.Append(" / ");
+                    sb.Append(this.Denominator);
+                    sb.Append(')');
+                    return sb.ToString();
+                default:
+                    throw new FormatException(String.Format("The {0} format string is not supported.", format));
+            }
+        }
+
+        public string ToString(string format, IFormatProvider formatProvider)
+        {
+            if (formatProvider == null)
+                return ToString(format);
+            throw new NotImplementedException();
+        }
+        #endregion
+
+        #region CompareTo
+        public int CompareTo(Fraction fraction)
+        {
+            BigInteger divA = this.Numerator / this.Denominator;
+            BigInteger divB = fraction.Numerator / fraction.Denominator;
+            BigInteger remA = this.Numerator % this.Denominator * this.Denominator;
+            BigInteger remB = fraction.Numerator % fraction.Denominator * fraction.Denominator;
+
+            if (divA == divB)
+            {
+                if (remA == remB)
+                {
+                    return 0;
+                }
+                else if (remA > remB)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return -1;
+                }
+            }
+            else
+            {
+                if (divA > divB)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return -1;
+                }
+            }
+        }
+        public int CompareTo(BigInteger other)
+        {
+            BigInteger frac = Numerator / Denominator;
+            if (frac != other)
+            {
+                return (frac - other).Sign;
+            }
+            else
+            {
+                BigInteger rem = Numerator % Denominator;
+                if (rem == 0)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return 1;
+                }
+            }
+        }
+
+
+        #endregion
+
+        #region Equals
+        public bool Equals(Fraction other)
+        {
+            var simplified = this.Simplify();
+            var simplifiedOther = other.Simplify();
+            return simplified.Numerator == simplifiedOther.Numerator && simplified.Denominator == simplifiedOther.Denominator;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Fraction frac)
+            {
+                return this.Equals(frac);
+            }
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return this.ToString().GetHashCode();
+        }
+        #endregion
+
+        #endregion
+    }
+
+    public static class FracMath
+    {
+        #region Square root Methods
         /// <summary>
         /// Takes the square root out of a number.
         /// </summary>
@@ -419,195 +583,32 @@ namespace FractionLibrary
                 throw new OverflowException($"This fraction has a numerator or denominator that is to big.", ex);
             }
         }
-
-
         #endregion
 
-        #region Operators
-        #region Arithmatic
-        public static Fraction operator +(Fraction a, Fraction b)
-
-            => new Fraction(a.numerator * b.denominator + b.numerator * a.denominator, a.denominator * b.denominator);
-        public static Fraction operator -(Fraction a, Fraction b)
-
-            => new Fraction(a.Numerator * b.Denominator - a.Denominator * b.Denominator, a.Denominator * b.Denominator);
-
-        public static Fraction operator *(Fraction a, Fraction b)
-
-            => new Fraction(a.Numerator * b.Numerator, a.Denominator * b.Denominator);
-        
-        public static Fraction operator /(Fraction a, Fraction b) => a * ~b;
-        #endregion
-        #region Unary
-        /// <summary>
-        /// Inverts a fraction.
-        /// </summary>
-        /// <param name="a"></param>
-        /// <returns></returns>
-        public static Fraction operator ~(Fraction a) => new Fraction(a.denominator, a.numerator);
-
-        public static Fraction operator -(Fraction a) => new Fraction(a.numerator * -1, a.denominator);
-
-        public static Fraction operator +(Fraction a) => a;
-        #endregion
-        #region Comparison
-        public static bool operator ==(Fraction a, Fraction b)
+        #region Power methods
+        public static Fraction Pow(Fraction f, int n)
         {
-            return a.Equals(b);
-        }
-        public static bool operator !=(Fraction a, Fraction b) => !(a == b);
-        public static bool operator >(Fraction a, Fraction b)
-        {
-            var c = a - b;
-            //if a - b results in 0, it is false, otherwise return if a - b is larger than 0.
-            return c.Numerator != 0 ? c.Numerator > 0 : false;
-        }
-        public static bool operator <(Fraction a, Fraction b) => b > a;
-        public static bool operator >=(Fraction a, Fraction b) => a == b || a > b;
-        public static bool operator <=(Fraction a, Fraction b) => b >= a;
-        #endregion
-        #endregion
+            Fraction ans;
 
-        #region Helper Methods
-        /// <summary>
-        /// Returns the greatest common divisor of two integers.
-        /// </summary>
-        /// <param name="a"></param>
-        /// <param name="b"></param>
-        /// <returns></returns>
-        private static BigInteger GCD(BigInteger a, BigInteger b)
-        {
-            if (a == 0)
-                return b;
-            return GCD(b % a, a);
-        }
-
-        #region ToString
-        /// <summary>
-        /// Returns the fraction as "(a / b)"
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString() => $"({this.Numerator} / {this.Denominator})";
-        /// <summary>
-        /// Returns a fraction as "(a / b)" or "(a + b / c)"
-        /// </summary>
-        /// <param name="format">S = full integers separately</param>
-        /// <returns></returns>
-        public string ToString(string format)
-        {
-            if (string.IsNullOrEmpty(format))
-                return this.ToString();
-
-            switch (format.ToUpperInvariant())
+            if (n > 1)
             {
-                case "G":
-                case "F":
-                    return this.ToString();
-                case "S":
-                    var sb = new StringBuilder();
-                    sb.Append('(');
-                    sb.Append(this.Numerator / this.Denominator);
-                    sb.Append(" + ");
-                    sb.Append(this.Numerator % this.Denominator);
-                    sb.Append(" / ");
-                    sb.Append(this.Denominator);
-                    sb.Append(')');
-                    return sb.ToString();
-                default:
-                    throw new FormatException(String.Format("The {0} format string is not supported.", format));
+                ans = f * Pow(f, --n);
             }
-        }
-
-        public string ToString(string format, IFormatProvider formatProvider)
-        {
-            if(formatProvider == null)
-                return ToString(format);
-            throw new NotImplementedException();
-        }
-        #endregion
-
-        #region CompareTo
-        public int CompareTo(Fraction fraction)
-        {
-            BigInteger divA = this.Numerator / this.Denominator;
-            BigInteger divB = fraction.Numerator / fraction.Denominator;
-            BigInteger remA = this.Numerator % this.Denominator * this.Denominator;
-            BigInteger remB = fraction.Numerator % fraction.Denominator * fraction.Denominator;
-
-            if (divA == divB)
+            else if (n < 0)
             {
-                if (remA == remB)
-                {
-                    return 0;
-                }
-                else if (remA > remB)
-                {
-                    return 1;
-                }
-                else
-                {
-                    return -1;
-                }
+                ans = 1 / Pow(f, -1 * n);
+            }
+            else if (n == 1)
+            {
+                ans = f;
             }
             else
             {
-                if (divA > divB)
-                {
-                    return 1;
-                }
-                else
-                {
-                    return -1;
-                }
+                ans = Fraction.Identity;
             }
+
+            return ans.Simplify();
         }
-        public int CompareTo(BigInteger other)
-        {
-            BigInteger frac = Numerator / Denominator;
-            if (frac != other)
-            {
-                return (frac - other).Sign;
-            }
-            else
-            {
-                BigInteger rem = Numerator % Denominator;
-                if (rem == 0)
-                {
-                    return 0;
-                }
-                else
-                {
-                    return 1;
-                }
-            }
-        }
-
-
-        #endregion
-
-        #region Equals
-        public bool Equals(Fraction other)
-        {
-            var simplified = this.Simplify();
-            var simplifiedOther = other.Simplify();
-            return simplified.Numerator == simplifiedOther.Numerator && simplified.Denominator == simplifiedOther.Denominator;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is Fraction frac)
-            {
-                return this.Equals(frac);
-            }
-            return base.Equals(obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return this.ToString().GetHashCode();
-        }
-        #endregion
-
         #endregion
     }
 }
