@@ -223,7 +223,7 @@ namespace FractionLibrary
             => new Fraction(a.numerator * b.denominator + b.numerator * a.denominator, a.denominator * b.denominator);
         public static Fraction operator -(Fraction a, Fraction b)
 
-            => new Fraction(a.Numerator * b.Denominator - a.Denominator * b.Denominator, a.Denominator * b.Denominator);
+            => new Fraction(a.Numerator * b.Denominator - a.Denominator * b.Numerator, a.Denominator * b.Denominator);
 
         public static Fraction operator *(Fraction a, Fraction b)
 
@@ -294,9 +294,9 @@ namespace FractionLibrary
             switch (format.ToUpperInvariant())
             {
                 case "G":
-                case "F":
-                    return this.ToString();
                 case "S":
+                    return this.ToString();
+                case "B":
                     var sb = new StringBuilder();
                     sb.Append('(');
                     sb.Append(this.Numerator / this.Denominator);
@@ -306,6 +306,8 @@ namespace FractionLibrary
                     sb.Append(this.Denominator);
                     sb.Append(')');
                     return sb.ToString();
+                case "D":
+                    return this.ApproximateAsString();
                 default:
                     throw new FormatException(String.Format("The {0} format string is not supported.", format));
             }

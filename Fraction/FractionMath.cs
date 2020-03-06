@@ -6,7 +6,7 @@ using System.Numerics;
 namespace FractionLibrary
 {
     /// <summary>
-    /// A class containing several extension methods 
+    /// A class containing several extension methods for expensive calculations on fractions.
     /// </summary>
     public static class FractionMath
     {
@@ -105,7 +105,7 @@ namespace FractionLibrary
         #endregion
 
         #region Power methods
-        public static Fraction Pow(Fraction f, int n)
+        public static Fraction Pow(this Fraction f, int n)
         {
             Fraction ans;
 

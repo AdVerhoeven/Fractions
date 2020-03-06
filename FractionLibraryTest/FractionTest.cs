@@ -1,6 +1,7 @@
-﻿using System;
+﻿using FractionLibrary;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using FractionLibrary;
+using System;
+using System.Collections.Generic;
 using System.Numerics;
 
 namespace FractionLibraryTest
@@ -8,6 +9,38 @@ namespace FractionLibraryTest
     [TestClass]
     public class FractionTest
     {
+        [TestMethod]
+        public void AdditionTest()
+        {
+            //Arrange
+            var expected = Fraction.Identity;
+            var frac1 = new Fraction(1, 2);
+            var frac2 = new Fraction(1, 2);
+
+            //Act
+            var actual = frac1 + frac2;
+            var actual2 = frac2 + frac1;
+
+            //Assert
+            Assert.AreEqual(expected, actual);
+            Assert.AreEqual(expected, actual2);
+        }
+
+        [TestMethod]
+        public void SubtractionTest()
+        {
+            //Arrange
+            var expected = Fraction.Identity;
+            var frac1 = new Fraction(3, 2);
+            var frac2 = new Fraction(1, 2);
+
+            //Act
+            var actual = frac1 - frac2;
+
+            //Assert
+            Assert.AreEqual(expected, actual);
+        }
+
         [TestMethod]
         public void MultiplicationTest()
         {
@@ -85,24 +118,8 @@ namespace FractionLibraryTest
             Assert.AreEqual(expected, actual);
         }
 
-        [TestMethod]
-        [DataRow(3)]
-        [DataRow(5)]
-        [DataRow(7)]
-        [DataRow(11)]
-        [DataRow(13)]
-        [DataRow(17)]
-        [DataRow(19)]
-        [DataRow(23)]
-        [DataRow(29)]
-        [DataRow(31)]
-        [DataRow(37)]
-        [DataRow(41)]
-        [DataRow(43)]
-        [DataRow(47)]
-        [DataRow(53)]
-        [DataRow(59)]
-        [DataRow(379)]
+        [TestMethod]        
+        [DynamicData(nameof(GetPrimes), DynamicDataSourceType.Method)]
         public void FracSqrtTest(int n)
         {
             //Arrange
@@ -130,6 +147,34 @@ namespace FractionLibraryTest
             //}            
         }
 
+        private static IEnumerable<object[]> GetPrimes()
+        {
+            var maxPrime = 1000;
+            bool[] eliminated = new bool[maxPrime];
+            int maxSquareRoot = (int)Math.Sqrt(maxPrime);
+
+            //For all Uneven numbers above 1
+            for (int num = 3; num < maxPrime; num += 2)
+            {
+                //Check if this number has already been checked as eliminated, e.g. is a multiple of any prime.
+                if (!eliminated[num])
+                {
+                    //Add the new Prime
+                    yield return new object[] { num};
+                    //If the prime is smaller then the squareroot of our maxValue we do not need to eliminate anything.
+                    if (num < maxSquareRoot)
+                    {
+                        //Skip al even multiples and redudant multiples by starting at its square and adding 2*num.
+                        //Uneven + Uneven = Even. Uneven + Even = Uneven. This means we save ourselves a lot of work.
+                        for (int j = num * num; j < maxPrime && j > 0; j += num + num)
+                        {
+                            //Eliminate this multiple of a prime.
+                            eliminated[j] = true;
+                        }
+                    }
+                }
+            }
+        }
 
         [TestMethod]
         public void InverseTest()
@@ -154,7 +199,8 @@ namespace FractionLibraryTest
             //Act
             var actualMult = Fraction.Identity * Fraction.Identity;
             var actualDiv = Fraction.Identity / Fraction.Identity;
-            var actualPow = FractionMath.Pow(Fraction.Identity,10);
+            var actualPow = Fraction.Identity.Pow(10);
+            var actualSqrt = FractionMath.Sqrt(1);
 
             //Assert
             Assert.AreEqual(expected, actualMult);
