@@ -48,6 +48,7 @@ namespace FractionLibraryTest
             var expected = new Fraction(1, 6);
             var x = new Fraction(1, 2);
             var y = new Fraction(1, 3);
+            var z = new Fraction(1, 5);
 
             //Act
             var actual = x * y;
@@ -55,6 +56,7 @@ namespace FractionLibraryTest
             //Assert
             Assert.AreEqual(expected, actual);
             Assert.AreEqual(x * y, y * x);
+            Assert.AreEqual((x * y) * z, x * (y * z));
         }
 
         [TestMethod]
@@ -118,7 +120,7 @@ namespace FractionLibraryTest
             Assert.AreEqual(expected, actual);
         }
 
-        [TestMethod]        
+        [TestMethod]
         [DynamicData(nameof(GetPrimes), DynamicDataSourceType.Method)]
         public void FracSqrtTest(int n)
         {
@@ -160,7 +162,7 @@ namespace FractionLibraryTest
                 if (!eliminated[num])
                 {
                     //Add the new Prime
-                    yield return new object[] { num};
+                    yield return new object[] { num };
                     //If the prime is smaller then the squareroot of our maxValue we do not need to eliminate anything.
                     if (num < maxSquareRoot)
                     {
@@ -185,6 +187,19 @@ namespace FractionLibraryTest
 
             //Act
             actual = ~actual;
+
+            //Assert
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void InverseAndPowerTest()
+        {
+            //Arrange
+            var expected = ~new Fraction(1, 5);
+
+            //Act
+            var actual = FractionMath.Pow(new Fraction(1, 5), -1);
 
             //Assert
             Assert.AreEqual(expected, actual);

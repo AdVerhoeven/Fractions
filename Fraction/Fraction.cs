@@ -59,6 +59,11 @@ namespace FractionLibrary
                 {
                     denominator = value;
                 }
+                else if(value < 0)
+                {
+                    numerator *= -1;
+                    denominator *= -1;
+                }
                 else
                 {
                     throw new DivideByZeroException("The Denominator must be greater then 0");
@@ -85,11 +90,6 @@ namespace FractionLibrary
             if (den == 0)
             {
                 throw new DivideByZeroException($"Can't divide by zero. {den} is zero");
-            }
-            if (den < 0)
-            {
-                num *= -1;
-                den *= -1;
             }
 
             numerator = num;
@@ -217,6 +217,7 @@ namespace FractionLibrary
         #endregion
 
         #region Operators
+
         #region Arithmatic
         public static Fraction operator +(Fraction a, Fraction b)
 
@@ -231,6 +232,7 @@ namespace FractionLibrary
 
         public static Fraction operator /(Fraction a, Fraction b) => a * ~b;
         #endregion
+
         #region Unary
         /// <summary>
         /// Inverts a fraction.
@@ -243,6 +245,7 @@ namespace FractionLibrary
 
         public static Fraction operator +(Fraction a) => a;
         #endregion
+
         #region Comparison
         public static bool operator ==(Fraction a, Fraction b)
         {
@@ -259,6 +262,7 @@ namespace FractionLibrary
         public static bool operator >=(Fraction a, Fraction b) => a == b || a > b;
         public static bool operator <=(Fraction a, Fraction b) => b >= a;
         #endregion
+
         #endregion
 
         #region Helper Methods
@@ -281,6 +285,7 @@ namespace FractionLibrary
         /// </summary>
         /// <returns></returns>
         public override string ToString() => $"({this.Numerator} / {this.Denominator})";
+
         /// <summary>
         /// Returns a fraction as "(a / b)" or "(a + b / c)"
         /// </summary>
@@ -306,13 +311,18 @@ namespace FractionLibrary
                     sb.Append(this.Denominator);
                     sb.Append(')');
                     return sb.ToString();
-                case "D":
-                    return this.ApproximateAsString();
                 default:
                     throw new FormatException(String.Format("The {0} format string is not supported.", format));
             }
         }
 
+        // TODO: Implement?
+        /// <summary>
+        /// Not implemented do not use.
+        /// </summary>
+        /// <param name="format"></param>
+        /// <param name="formatProvider"></param>
+        /// <returns></returns>
         public string ToString(string format, IFormatProvider formatProvider)
         {
             if (formatProvider == null)

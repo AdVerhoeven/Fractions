@@ -13,9 +13,9 @@ namespace FractionConsole
         static void Main(string[] args)
         {
             var rootThree = FractionMath.Sqrt(3);
-            Console.WriteLine(rootThree.Approximate());
-            Console.WriteLine((rootThree * rootThree).Approximate());
-            Console.WriteLine(rootThree.ToString("s"));
+            Console.WriteLine($"double.Parse({rootThree.ApproximateAsString()}) = {rootThree.Approximate()}");
+            Console.WriteLine($"double.Parse({(rootThree * rootThree).ApproximateAsString()}) = {(rootThree * rootThree).Approximate()}");
+            Console.WriteLine($"{rootThree.ToString()} == { rootThree.ToString("b")}");
 
             Console.ReadKey();
         }
