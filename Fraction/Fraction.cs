@@ -96,6 +96,10 @@ namespace FractionLibrary
             denominator = den;
         }
 
+        /// <summary>
+        /// Copy Constructor
+        /// </summary>
+        /// <param name="frac"></param>
         public Fraction(Fraction frac)
         {
             numerator = frac.Numerator;
@@ -166,7 +170,7 @@ namespace FractionLibrary
         /// </summary>
         /// <param name="continuedFractions">The sequence of denominators in the continued fraction.</param>
         /// <param name="steps">The amount of steps to execute the continued fration.</param>
-        public Fraction(KeyValuePair<int, List<int>> continuedFractions, int steps)
+        public Fraction(KeyValuePair<BigInteger, List<BigInteger>> continuedFractions, int steps)
         {
             var initial = continuedFractions.Key;
             var period = continuedFractions.Value;

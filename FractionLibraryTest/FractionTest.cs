@@ -16,14 +16,16 @@ namespace FractionLibraryTest
             var expected = Fraction.Identity;
             var frac1 = new Fraction(1, 2);
             var frac2 = new Fraction(1, 2);
+            var frac3 = new Fraction(1, 3);
 
             //Act
             var actual = frac1 + frac2;
-            var actual2 = frac2 + frac1;
+            var actual2 = frac2 + frac1;            
 
             //Assert
             Assert.AreEqual(expected, actual);
             Assert.AreEqual(expected, actual2);
+            Assert.AreEqual(frac1 + frac2 + frac3, frac3 + frac2 + frac1);
         }
 
         [TestMethod]

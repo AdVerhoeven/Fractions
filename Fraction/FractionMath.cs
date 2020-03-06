@@ -17,47 +17,46 @@ namespace FractionLibrary
         /// </summary>
         /// <param name="n">Returns a fraction </param>
         /// <returns></returns>
-        public static Fraction Sqrt(int n)
+        public static Fraction Sqrt(BigInteger n)
         {
             //HACK: default precision of 30, more can/could be achieved.
             return new Fraction(SqrtAsContinuedFraction(n), 30);
         }
-
-        // TODO: Add a method that has a limit? This might give a significant speed-up without to much loss of precision.
+        
         /// <summary>
         /// Gets a list of integers that represent the initial and denominator values in the continued fraction of a given square root.
         /// </summary>
         /// <param name="n"></param>
         /// <returns>Initial value and the denominator sequence</returns>
-        public static KeyValuePair<int, List<int>> SqrtAsContinuedFraction(int n)
+        public static KeyValuePair<BigInteger, List<BigInteger>> SqrtAsContinuedFraction(BigInteger n)
         {
             //find a0, if this is the exact root, we're done
-            int an = 1;
+            BigInteger an = 1;
             while (an * an < n)
             {
                 an++;
             }
             if (an * an == n)
             {
-                return new KeyValuePair<int, List<int>>(an, new List<int>());
+                return new KeyValuePair<BigInteger, List<BigInteger>>(an, new List<BigInteger>());
             }
             else
             {
                 an--;
             }
-            int initial = an;
-            var continuedFraction = new KeyValuePair<int, List<int>>(initial, new List<int>());
-            var signatures = new List<Tuple<int, int, int>>();
+            BigInteger initial = an;
+            var continuedFraction = new KeyValuePair<BigInteger, List<BigInteger>>(initial, new List<BigInteger>());
+            var signatures = new List<Tuple<BigInteger, BigInteger, BigInteger>>();
 
             //now we get into the repeating part
-            int mn = 0;
-            int dn = 1;
+            BigInteger mn = 0;
+            BigInteger dn = 1;
             while (true)
             {
-                int mn1 = dn * an - mn;
-                int dn1 = (n - (mn1 * mn1)) / dn;
-                int an1 = (initial + mn1) / dn1;
-                var newSignature = new Tuple<int, int, int>(an1, mn1, dn1);
+                BigInteger mn1 = dn * an - mn;
+                BigInteger dn1 = (n - (mn1 * mn1)) / dn;
+                BigInteger an1 = (initial + mn1) / dn1;
+                var newSignature = new Tuple<BigInteger, BigInteger, BigInteger>(an1, mn1, dn1);
                 if (signatures.Count > 0)
                 {
                     if (signatures.Contains(newSignature))
