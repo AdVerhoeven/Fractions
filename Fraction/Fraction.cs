@@ -424,49 +424,19 @@ namespace FractionLibrary
         #endregion
 
         #region Operators
-        #region add
+        #region Arithmatic
         public static Fraction operator +(Fraction a, Fraction b)
+
             => new Fraction(a.numerator * b.denominator + b.numerator * a.denominator, a.denominator * b.denominator);
-
-        public static Fraction operator +(Fraction a, BigInteger b) => new Fraction(a.Numerator + a.Denominator * b, a.Denominator);
-        public static Fraction operator +(BigInteger a, Fraction b) => new Fraction(b.Numerator + a * b.Denominator, b.Denominator);
-        //public static double operator +(double a, Fraction b) => a + (double)b.Numerator / (double)b.Denominator;
-        #endregion
-        #region subtract
         public static Fraction operator -(Fraction a, Fraction b)
-            => new Fraction(a.Numerator * b.Denominator - a.Denominator * b.Denominator, a.Denominator * b.Denominator);
-        public static Fraction operator -(Fraction a, BigInteger b) => new Fraction(a.Numerator - a.Denominator * b, a.Denominator);
 
-        public static Fraction operator -(BigInteger a, Fraction b) => new Fraction(b.Numerator - a * b.Denominator, b.Denominator);
-        #endregion
-        #region multiply
+            => new Fraction(a.Numerator * b.Denominator - a.Denominator * b.Denominator, a.Denominator * b.Denominator);
+
         public static Fraction operator *(Fraction a, Fraction b)
+
             => new Fraction(a.Numerator * b.Numerator, a.Denominator * b.Denominator);
-        public static Fraction operator *(Fraction a, BigInteger b) => new Fraction(a.Numerator * b, a.Denominator);
-        public static Fraction operator *(BigInteger a, Fraction b) => b * a;
-        #endregion
-        #region divide
-        /// <summary>
-        /// Divides a fraction with a fraction.
-        /// </summary>
-        /// <param name="a">Fraction</param>
-        /// <param name="b">Fraction</param>
-        /// <returns>Fraction</returns>
+        
         public static Fraction operator /(Fraction a, Fraction b) => a * ~b;
-        /// <summary>
-        /// Divides a fraction with an integer.
-        /// </summary>
-        /// <param name="a">Fraction</param>
-        /// <param name="b">(Big)Integer</param>
-        /// <returns>Fraction</returns>
-        public static Fraction operator /(Fraction a, BigInteger b) => new Fraction(a.Numerator, a.Denominator * b);
-        /// <summary>
-        /// Divides an integer with a fraction.
-        /// </summary>
-        /// <param name="a">(Big)Integer</param>
-        /// <param name="b">Fraction</param>
-        /// <returns>Fraction</returns>
-        public static Fraction operator /(BigInteger a, Fraction b) => ~b * a;
         #endregion
         #region Unary
         /// <summary>
