@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Globalization;
+using System.Numerics;
 
 namespace FractionLibrary
 {
-    public static class FracMath
+    /// <summary>
+    /// A class containing several extension methods 
+    /// </summary>
+    public static class FractionMath
     {
         #region Square root Methods
         /// <summary>
@@ -83,7 +85,7 @@ namespace FractionLibrary
         /// </summary>
         /// <param name="f"></param>
         /// <returns></returns>
-        public static Fraction Sqrt(Fraction f)
+        public static Fraction Sqrt(this Fraction f)
         {
             if (f.Numerator == f.Denominator)
             {
@@ -126,6 +128,86 @@ namespace FractionLibrary
 
             return ans.Simplify();
         }
+        #endregion
+
+        #region Approximate Methods
+        /// <summary>
+        /// Approximates as a Fraction to a double. For full precision use the ApproximatePrecise() method.
+        /// </summary>
+        /// <returns></returns>
+        public static double Approximate(this Fraction f)
+        {
+            var t = (double)f.Numerator / (double)f.Denominator;
+            if (double.IsNaN(t))
+            {
+                return double.Parse(ApproximateAsString(f, 10));
+            }
+            // A double has a limited precision of 15-17 decimal digits.
+            return (double.IsNaN(t)) ? double.Parse(ApproximateAsString(f)) : t;
+        }
+
+        /// <summary>
+        /// Approximates a Fraction to a floating point string.
+        /// The brackets encapsulate the repeating sequence within the real/floating point number.
+        /// </summary>
+        /// <returns></returns>
+        public static string ApproximateAsString(this Fraction f)
+        {
+            //HACK: Default limit of 30 decimal digits.
+            return ApproximateAsString(f, 30);
+        }
+
+        /// <summary>
+        /// Approximates a Fraction to a floating point string.
+        /// The brackets encapsulate the repeating sequence within the real/floating point number.
+        /// </summary>
+        /// <param name="lim">The amount of digits behind the decimal point to be found.</param>
+        /// <returns>A floating point string.</returns>
+        public static string ApproximateAsString(this Fraction f, int lim)
+        {
+            //TODO: Use stringbuilder?
+            string ans = string.Empty;
+            BigInteger numerator = f.Numerator;
+            BigInteger denominator = f.Denominator;
+            bool zero = false;
+            List<BigInteger> numerators = new List<BigInteger>();
+            while (numerator != 0)
+            {
+                // Long divison
+                if (numerator > denominator && !zero)
+                {
+                    BigInteger quotient = numerator / denominator;
+                    BigInteger rest = numerator % denominator;
+                    ans += quotient.ToString();
+                    numerator = rest;
+                }
+                // Once we have calculated the whole numbers we get into this part.
+                if (zero)
+                {
+                    if (lim < 1)
+                    {
+                        break;
+                    }
+                    BigInteger quotient = (numerator * 10) / denominator;
+                    BigInteger rest = (numerator * 10) % denominator;
+                    ans += quotient.ToString();
+                    numerators.Add(numerator);
+                    numerator = rest;
+                    lim--;
+                }
+                if (numerator < denominator && !zero)
+                {
+                    if (ans == string.Empty)
+                    {
+                        ans = "0";
+                    }
+                    ans += CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+                    zero = true;
+                }
+            }
+            return ans;
+        }
+
         #endregion
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Numerics;
 using System.Text;
 
@@ -13,7 +12,7 @@ namespace FractionLibrary
     /// Can be compared with integers, doubles and fractions.
     /// Can be used within its own constructors for simplified writing of recursive behaviour.
     /// </summary>
-    public struct Fraction : IComparable<Fraction>, IComparable<BigInteger>, IEquatable<Fraction>, IFormattable
+    public struct Fraction : IComparable<Fraction>, IEquatable<Fraction>, IFormattable
     {
         #region Conversions
         // Implicit Convserions
@@ -215,90 +214,6 @@ namespace FractionLibrary
             return ans;
         }
 
-
-
-        #region Approximate Methods
-        /// <summary>
-        /// Approximates as a Fraction to a double. For full precision use the ApproximatePrecise() method.
-        /// </summary>
-        /// <returns></returns>
-        public double Approximate()
-        {
-            var t = (double)Numerator / (double)Denominator;
-            if (double.IsNaN(t))
-            {
-                return double.Parse(ApproximateAsString(10));
-            }
-            // A double has a limited precision of 15-17 decimal digits.
-            return (double.IsNaN(t)) ? double.Parse(ApproximateAsString()) : t;
-        }
-
-        /// <summary>
-        /// Approximates a Fraction to a floating point string.
-        /// The brackets encapsulate the repeating sequence within the real/floating point number.
-        /// </summary>
-        /// <returns></returns>
-        public string ApproximateAsString()
-        {
-            //HACK: Default limit of 30 decimal digits.
-            return ApproximateAsString(30);
-        }
-
-        /// <summary>
-        /// Approximates a Fraction to a floating point string.
-        /// The brackets encapsulate the repeating sequence within the real/floating point number.
-        /// </summary>
-        /// <param name="lim">The amount of digits behind the decimal point to be found.</param>
-        /// <returns>A floating point string.</returns>
-        public string ApproximateAsString(int lim)
-        {
-            //TODO: Use stringbuilder?
-            string ans = string.Empty;
-            BigInteger numerator = this.Numerator;
-            BigInteger denominator = this.Denominator;
-            bool zero = false;
-            List<BigInteger> numerators = new List<BigInteger>();
-            while (numerator != 0)
-            {
-                // Long divison
-                if (numerator > denominator && !zero)
-                {
-                    BigInteger quotient = numerator / denominator;
-                    BigInteger rest = numerator % denominator;
-                    ans += quotient.ToString();
-                    numerator = rest;
-                }
-                // Once we have calculated the whole numbers we get into this part.
-                if (zero)
-                {
-                    if (lim < 1)
-                    {
-                        break;
-                    }
-                    BigInteger quotient = (numerator * 10) / denominator;
-                    BigInteger rest = (numerator * 10) % denominator;
-                    ans += quotient.ToString();
-                    numerators.Add(numerator);
-                    numerator = rest;
-                    lim--;
-                }
-                if (numerator < denominator && !zero)
-                {
-                    if (ans == string.Empty)
-                    {
-                        ans = "0";
-                    }
-                    ans += CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
-                    zero = true;
-                }
-            }
-            return ans;
-        }
-
-        #endregion
-
-
-
         #endregion
 
         #region Operators
@@ -439,28 +354,6 @@ namespace FractionLibrary
                 }
             }
         }
-        public int CompareTo(BigInteger other)
-        {
-            BigInteger frac = Numerator / Denominator;
-            if (frac != other)
-            {
-                return (frac - other).Sign;
-            }
-            else
-            {
-                BigInteger rem = Numerator % Denominator;
-                if (rem == 0)
-                {
-                    return 0;
-                }
-                else
-                {
-                    return 1;
-                }
-            }
-        }
-
-
         #endregion
 
         #region Equals

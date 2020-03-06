@@ -50,7 +50,7 @@ namespace FractionLibraryTest
                 fraction * fraction;
 
             //Act
-            var actual = FracMath.Pow(fraction, 5);
+            var actual = FractionMath.Pow(fraction, 5);
 
             //Assert
             Assert.AreEqual(expected, actual);
@@ -65,7 +65,7 @@ namespace FractionLibraryTest
             var expected = new Fraction(2, 1);
 
             //Act
-            var actual = FracMath.Sqrt(4);
+            var actual = FractionMath.Sqrt(4);
 
             //Assert
             Assert.AreEqual(expected, actual);
@@ -78,8 +78,8 @@ namespace FractionLibraryTest
             var expected = new Fraction(1, 2);
 
             //Act
-            var temp = FracMath.Pow(new Fraction(1, 2), 2);
-            var actual = FracMath.Sqrt(temp);
+            var temp = FractionMath.Pow(new Fraction(1, 2), 2);
+            var actual = FractionMath.Sqrt(temp);
 
             //Assert
             Assert.AreEqual(expected, actual);
@@ -106,13 +106,13 @@ namespace FractionLibraryTest
         public void FracSqrtTest(int n)
         {
             //Arrange
-            var expected = FracMath.Sqrt(new Fraction(1, n));
+            var expected = FractionMath.Sqrt(new Fraction(1, n));
             // These two will fail to pass all the tests.
             //var expectedString = expected.ApproximateAsString();
             //var expectedDouble = expected.Approximate();
 
             //Act
-            var actual = new Fraction(FracMath.Sqrt(n), n);
+            var actual = new Fraction(FractionMath.Sqrt(n), n);
 
             // These two will fail to pass all the tests.
             //var actualString = actual.ApproximateAsString();            
@@ -154,7 +154,7 @@ namespace FractionLibraryTest
             //Act
             var actualMult = Fraction.Identity * Fraction.Identity;
             var actualDiv = Fraction.Identity / Fraction.Identity;
-            var actualPow = FracMath.Pow(Fraction.Identity,10);
+            var actualPow = FractionMath.Pow(Fraction.Identity,10);
 
             //Assert
             Assert.AreEqual(expected, actualMult);

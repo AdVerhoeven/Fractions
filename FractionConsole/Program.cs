@@ -12,7 +12,7 @@ namespace FractionConsole
     {
         static void Main(string[] args)
         {
-            var rootThree = FracMath.Sqrt(3);
+            var rootThree = FractionMath.Sqrt(3);
             Console.WriteLine(rootThree.Approximate());
             Console.WriteLine((rootThree * rootThree).Approximate());
             Console.WriteLine(rootThree.ToString("s"));
