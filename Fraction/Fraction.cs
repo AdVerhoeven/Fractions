@@ -500,11 +500,13 @@ namespace FractionLibrary
                     return this.ToString();
                 case "S":
                     var sb = new StringBuilder();
+                    sb.Append('(');
                     sb.Append(this.Numerator / this.Denominator);
                     sb.Append(" + ");
                     sb.Append(this.Numerator % this.Denominator);
                     sb.Append(" / ");
                     sb.Append(this.Denominator);
+                    sb.Append(')');
                     return sb.ToString();
                 default:
                     throw new FormatException(String.Format("The {0} format string is not supported.", format));
