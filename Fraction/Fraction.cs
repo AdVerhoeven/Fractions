@@ -19,7 +19,7 @@ namespace FractionLibrary
         public static implicit operator Fraction(BigInteger b) => new Fraction(b, 1);
         public static implicit operator Fraction(int i) => new Fraction(i, 1);
         // HACK: ToString() isn't called in Console.WriteLine()???
-        public static implicit operator String(Fraction f) => f.ToString();
+        //public static implicit operator string(Fraction f) => f.ToString();
 
         //HACK: We do not really need this implicit conversion since it will not be used, it could however be added.
         //public static implicit operator Fraction(long l) => new Fraction(l, 1);
@@ -333,8 +333,11 @@ namespace FractionLibrary
         {
             if (formatProvider == null)
                 return ToString(format);
-            return ToString();
+            return ToString(format);
         }
+
+        // HACK: IFormattable says it does not need this but it does!
+        //public string ToString(IFormatProvider formatProvider) => ToString("G");
         #endregion
 
         #region CompareTo
