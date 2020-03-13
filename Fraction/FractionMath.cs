@@ -23,7 +23,7 @@ namespace FractionLibrary
             {
                 throw new ArgumentException($"Cannot take the root of {n} because it is negative.");
             }
-            if(steps < 0)
+            if (steps < 0)
             {
                 throw new ArgumentException($"Cannot take a negative amount of steps");
             }
@@ -36,7 +36,7 @@ namespace FractionLibrary
         /// </summary>
         /// <param name="n">The integer to root</param>
         /// <returns>Initial value and the denominator sequence</returns>
-        public static KeyValuePair<BigInteger, List<BigInteger>> SqrtAsContinuedFraction(BigInteger n)
+        public static ValueTuple<BigInteger, List<BigInteger>, bool> SqrtAsContinuedFraction(BigInteger n)
         {
             //find a0, if this is the exact root, we're done
             BigInteger an = 1;
@@ -46,15 +46,18 @@ namespace FractionLibrary
             }
             if (an * an == n)
             {
-                return new KeyValuePair<BigInteger, List<BigInteger>>(an, new List<BigInteger>());
+                return new ValueTuple<BigInteger, List<BigInteger>, bool>(an, new List<BigInteger>(), false);
             }
             else
             {
                 an--;
             }
             BigInteger initial = an;
-            var continuedFraction = new KeyValuePair<BigInteger, List<BigInteger>>(initial, new List<BigInteger>());
-            var signatures = new List<Tuple<BigInteger, BigInteger, BigInteger>>();
+
+            var continuedFraction = new ValueTuple<BigInteger, List<BigInteger>, bool>
+                (initial, new List<BigInteger>(), false);
+
+            var signatures = new List<ValueTuple<BigInteger, BigInteger, BigInteger>>();
 
             //now we get into the repeating part
             BigInteger mn = 0;
@@ -64,23 +67,25 @@ namespace FractionLibrary
                 BigInteger mn1 = dn * an - mn;
                 BigInteger dn1 = (n - (mn1 * mn1)) / dn;
                 BigInteger an1 = (initial + mn1) / dn1;
-                var newSignature = new Tuple<BigInteger, BigInteger, BigInteger>(an1, mn1, dn1);
+                var newSignature = new ValueTuple<BigInteger, BigInteger, BigInteger>(an1, mn1, dn1);
                 if (signatures.Count > 0)
                 {
                     if (signatures.Contains(newSignature))
                     {
+                        // We have reached the end of the repeating sequence. set the bolean to true.
+                        continuedFraction.Item3 = true;
                         return continuedFraction;
                     }
                     else
                     {
                         signatures.Add(newSignature);
-                        continuedFraction.Value.Add(an1);//.Value.Add
+                        continuedFraction.Item2.Add(an1);
                     }
                 }
                 else
                 {
                     signatures.Add(newSignature);
-                    continuedFraction.Value.Add(an1);
+                    continuedFraction.Item2.Add(an1);
                 }
                 //the next a has been found, now we set up to find the new next
                 an = an1;

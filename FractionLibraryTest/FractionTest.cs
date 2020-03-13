@@ -217,12 +217,13 @@ namespace FractionLibraryTest
             var actualMult = Fraction.Identity * Fraction.Identity;
             var actualDiv = Fraction.Identity / Fraction.Identity;
             var actualPow = Fraction.Identity.Pow(10);
-            var actualSqrt = FractionMath.Sqrt(1);
+            var actualSqrt = Fraction.Identity.Sqrt();
 
             //Assert
             Assert.AreEqual(expected, actualMult);
             Assert.AreEqual(expected, actualDiv);
             Assert.AreEqual(expected, actualPow);
+            Assert.AreEqual(expected, actualSqrt);
         }
 
         [TestMethod]
@@ -244,7 +245,7 @@ namespace FractionLibraryTest
         {
             //Arrange
             var sequence = new List<BigInteger> { 0, 1, 2, 3 };
-            var contFrac = new KeyValuePair<BigInteger, List<BigInteger>>(0, sequence);
+            var contFrac = new ValueTuple<BigInteger, List<BigInteger>, bool>(0, sequence, false);
 
             //Act
             var continuedFraction = new Fraction(contFrac, 10);

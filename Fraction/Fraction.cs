@@ -42,7 +42,7 @@ namespace FractionLibrary
         public static Fraction Identity { get; } = new Fraction(1, 1);
 
         /// <summary>
-        /// The Nominator of the fraction.
+        /// The Nominator or top part of the fraction.
         /// </summary>
         public BigInteger Numerator
         {
@@ -57,7 +57,7 @@ namespace FractionLibrary
         }
 
         /// <summary>
-        /// The Denominator of the fraction.
+        /// The Denominator or bottom part of the fraction.
         /// </summary>
         public BigInteger Denominator
         {
@@ -83,6 +83,10 @@ namespace FractionLibrary
             }
         }
 
+        /// <summary>
+        /// Checks wether a fraction is a proper fraction.
+        /// </summary>
+        public bool IsProper => BigInteger.Abs(this.Numerator) < this.Denominator;
 
         #endregion
 
@@ -178,10 +182,10 @@ namespace FractionLibrary
         /// </summary>
         /// <param name="continuedFractions">The sequence of denominators in the continued fraction.</param>
         /// <param name="steps">The amount of steps to execute the continued fration.</param>
-        public Fraction(KeyValuePair<BigInteger, List<BigInteger>> continuedFractions, int steps)
+        public Fraction(ValueTuple<BigInteger, List<BigInteger>, bool> continuedFractions, int steps)
         {
-            var initial = continuedFractions.Key;
-            var period = continuedFractions.Value;
+            var initial = continuedFractions.Item1;
+            var period = continuedFractions.Item2;
             var periodLength = period.Count;
             if (periodLength == 0)
                 steps = 0;
@@ -341,12 +345,17 @@ namespace FractionLibrary
         #endregion
 
         #region CompareTo
-        public int CompareTo(Fraction fraction)
+        public int CompareTo(Fraction other)
         {
+            // NOTE: this isn't fully required, however it can be much faster since it skips the division and modulo operations below.
+            if (this.denominator == other.denominator)
+            {
+                return this.numerator.CompareTo(other.numerator);
+            }
             var divThis = this.Numerator / this.Denominator;
-            var divOther = fraction.Numerator / fraction.Denominator;
+            var divOther = other.Numerator / other.Denominator;
             var remThis = this.Numerator % this.Denominator * this.Denominator;
-            var remOther = fraction.Numerator % fraction.Denominator * fraction.Denominator;
+            var remOther = other.Numerator % other.Denominator * other.Denominator;
 
             // If the quotient of the fractions is equal...
             if (divThis == divOther)
