@@ -84,10 +84,14 @@ namespace FractionLibrary
         }
 
         /// <summary>
-        /// Checks wether a fraction is a proper fraction.
+        /// A proper fraction should have an absolute value of 1 or less.
         /// </summary>
         public bool IsProper => BigInteger.Abs(this.Numerator) < this.Denominator;
 
+        /// <summary>
+        /// A reduced fraction is a simplified fraction, e.g. the biggest factor is 1.
+        /// </summary>
+        public bool IsReduced => GCD(this.numerator, this.denominator) == 1;
         #endregion
 
         #region Constructors
