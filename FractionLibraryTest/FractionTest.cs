@@ -277,7 +277,7 @@ namespace FractionLibraryTest
             var actual = FractionMath.Sqrt(2, 5);
 
             //Assert
-            Assert.AreEqual((double)expected, (double)actual);
+            Assert.AreEqual(expected, actual);
         }
     }
 }
