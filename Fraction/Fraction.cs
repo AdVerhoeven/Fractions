@@ -18,16 +18,22 @@ namespace FractionLibrary
         // Implicit Convserions
         public static implicit operator Fraction(BigInteger b) => new Fraction(b, 1);
         public static implicit operator Fraction(int i) => new Fraction(i, 1);
-        // HACK: ToString() isn't called in Console.WriteLine()???
-        //public static implicit operator string(Fraction f) => f.ToString();
-
-        //HACK: We do not really need this implicit conversion since it will not be used, it could however be added.
+        // NOTE: We do not really need these implicit conversions since it will not be used most of the time, it could however be added. 
+        // BigIntegers have the implicit conversions so the BigInteger conversion should suffice for most situations.
         //public static implicit operator Fraction(long l) => new Fraction(l, 1);
+        //public static implicit operator Fraction(short s) => new Fraction(s, 1);
+        //public static implicit operator Fraction(ulong ul) => new Fraction(ul, 1);
 
         // Explicit conversions
         public static explicit operator BigInteger(Fraction f) => f.Numerator / f.Denominator;
         // a double has a limited precision of 15-17 decimal digits.
         public static explicit operator double(Fraction f) => double.Parse(f.ApproximateAsString(17));
+
+        public static explicit operator int(Fraction f)
+        {
+            var ans = f.Numerator / f.Denominator;
+            return (ans < int.MaxValue) ? (int)ans : throw new OverflowException("This fraction is to big");
+        }
         #endregion
 
         #region Properties
@@ -61,7 +67,7 @@ namespace FractionLibrary
                 {
                     denominator = value;
                 }
-                else if(value < 0)
+                else if (value < 0)
                 {
                     numerator *= -1;
                     denominator *= -1;
@@ -167,7 +173,7 @@ namespace FractionLibrary
         }
 
         /// <summary>
-        /// Approximates a fraction with a given (repeating?) sequence.
+        /// Approximates a fraction with a given (repeating) sequence.
         /// The sequence can/should not contain any zeroes.
         /// </summary>
         /// <param name="continuedFractions">The sequence of denominators in the continued fraction.</param>
@@ -180,28 +186,25 @@ namespace FractionLibrary
             if (periodLength == 0)
                 steps = 0;
 
-            Fraction r;
             if (steps == 0)
             {
-                r = new Fraction(initial, 1);
+                this = new Fraction(initial, 1);
             }
             else
             {
                 steps--;
-                //An invalid denominator list (e.g. one that contains zero) will throw a divide by zero exception
-                r = new Fraction(1, period[steps % periodLength]);
+                // An invalid denominator list (e.g. one that contains zero) will throw a divide by zero exception
+                this = new Fraction(1, period[steps % periodLength]);
                 while (steps > 0)
                 {
                     //a + 1/r
                     steps--;
-                    r = 1 / (period[steps % periodLength] + r);
+                    this = 1 / (period[steps % periodLength] + this);
                     //r = period[steps % periodLength] + new Fraction(1/r); 
                 }
-                r = (initial + r);
+                // At this point we've reached the upper/left part of the continued fraction so we need to add the initial value.
+                this = (initial + this);
             }
-
-            numerator = r.Numerator;
-            denominator = r.Denominator;
         }
         #endregion
 
@@ -213,9 +216,9 @@ namespace FractionLibrary
         /// <returns></returns>
         public Fraction Simplify()
         {
-            BigInteger gcd = GCD(this.Numerator, this.Denominator);
+            var gcd = GCD(this.Numerator, this.Denominator);
 
-            Fraction ans = new Fraction(this.Numerator / gcd, this.Denominator / gcd);
+            var ans = new Fraction(this.Numerator / gcd, this.Denominator / gcd);
 
             return ans;
         }
@@ -228,13 +231,16 @@ namespace FractionLibrary
         public static Fraction operator +(Fraction a, Fraction b)
 
             => new Fraction(a.numerator * b.denominator + b.numerator * a.denominator, a.denominator * b.denominator);
+
         public static Fraction operator -(Fraction a, Fraction b)
 
             => new Fraction(a.Numerator * b.Denominator - a.Denominator * b.Numerator, a.Denominator * b.Denominator);
 
+
         public static Fraction operator *(Fraction a, Fraction b)
 
             => new Fraction(a.Numerator * b.Numerator, a.Denominator * b.Denominator);
+
 
         public static Fraction operator /(Fraction a, Fraction b) => a * ~b;
         #endregion
@@ -253,10 +259,7 @@ namespace FractionLibrary
         #endregion
 
         #region Comparison
-        public static bool operator ==(Fraction a, Fraction b)
-        {
-            return a.Equals(b);
-        }
+        public static bool operator ==(Fraction a, Fraction b) => a.Equals(b);
         public static bool operator !=(Fraction a, Fraction b) => !(a == b);
         public static bool operator >(Fraction a, Fraction b)
         {
@@ -293,7 +296,7 @@ namespace FractionLibrary
         public override string ToString() => $"({this.Numerator} / {this.Denominator})";
 
         /// <summary>
-        /// Returns a fraction as "(a / b)" or "(a + b / c)"
+        /// Returns a fraction as "(a / b)" ("G" or "S") or "(a + b / c)" ("B").
         /// </summary>
         /// <param name="format">S = full integers separately</param>
         /// <returns></returns>
@@ -322,7 +325,7 @@ namespace FractionLibrary
             }
         }
 
-        // TODO: Implement?
+        // TODO: Implement properly?
         /// <summary>
         /// Not implemented do not use.
         /// </summary>
@@ -332,40 +335,43 @@ namespace FractionLibrary
         public string ToString(string format, IFormatProvider formatProvider)
         {
             if (formatProvider == null)
-                return ToString(format);
-            return ToString(format);
+                return ToString();
+            return ToString();
         }
-
-        // HACK: IFormattable says it does not need this but it does!
-        //public string ToString(IFormatProvider formatProvider) => ToString("G");
         #endregion
 
         #region CompareTo
         public int CompareTo(Fraction fraction)
         {
-            BigInteger divA = this.Numerator / this.Denominator;
-            BigInteger divB = fraction.Numerator / fraction.Denominator;
-            BigInteger remA = this.Numerator % this.Denominator * this.Denominator;
-            BigInteger remB = fraction.Numerator % fraction.Denominator * fraction.Denominator;
+            var divThis = this.Numerator / this.Denominator;
+            var divOther = fraction.Numerator / fraction.Denominator;
+            var remThis = this.Numerator % this.Denominator * this.Denominator;
+            var remOther = fraction.Numerator % fraction.Denominator * fraction.Denominator;
 
-            if (divA == divB)
+            // If the quotient of the fractions is equal...
+            if (divThis == divOther)
             {
-                if (remA == remB)
+                // If the remainders are equal, the fractions are equal.
+                if (remThis == remOther)
                 {
                     return 0;
                 }
-                else if (remA > remB)
+                // The first fraction is bigger.
+                else if (remThis > remOther)
                 {
                     return 1;
                 }
+                // The first fraction is smaller.
                 else
                 {
                     return -1;
                 }
             }
+            // If the quotient of the fractions is not equal, check which fraction is larger.
             else
             {
-                if (divA > divB)
+                // Return based on whichever quotient is bigger.
+                if (divThis > divOther)
                 {
                     return 1;
                 }
@@ -394,10 +400,7 @@ namespace FractionLibrary
             return base.Equals(obj);
         }
 
-        public override int GetHashCode()
-        {
-            return this.ToString().GetHashCode();
-        }
+        public override int GetHashCode() => this.ToString().GetHashCode();
         #endregion
 
         #endregion

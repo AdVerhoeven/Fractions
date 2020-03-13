@@ -20,7 +20,7 @@ namespace FractionLibraryTest
 
             //Act
             var actual = frac1 + frac2;
-            var actual2 = frac2 + frac1;            
+            var actual2 = frac2 + frac1;
 
             //Assert
             Assert.AreEqual(expected, actual);
@@ -237,6 +237,47 @@ namespace FractionLibraryTest
 
             //Assert
             Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void ContinuedFractionTest()
+        {
+            //Arrange
+            var sequence = new List<BigInteger> { 0, 1, 2, 3 };
+            var contFrac = new KeyValuePair<BigInteger, List<BigInteger>>(0, sequence);
+
+            //Act
+            var continuedFraction = new Fraction(contFrac, 10);
+
+            //Assert
+            // This test is mostly to test for divide by zero exceptions that could be thrown.
+        }
+
+        [TestMethod]
+        public void SqrtOfZeroTest()
+        {
+            //Arrange
+            var expected = 0;
+            Fraction actual = 0;
+
+            //Act
+            actual = actual.Sqrt();
+
+            //Assert
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void SqrtOfTwoTest()
+        {
+            //Arrange
+            var expected = new Fraction(99, 70); // The fifth convergent of the continued fraction
+
+            //Act
+            var actual = FractionMath.Sqrt(2, 5);
+
+            //Assert
+            Assert.AreEqual((double)expected, (double)actual);
         }
     }
 }
