@@ -28,7 +28,7 @@ namespace FractionLibrary
                 throw new ArgumentException($"Cannot take a negative amount of steps");
             }
             //HACK: default precision of 30, more can/could be achieved.
-            return new Fraction(SqrtAsContinuedFraction(n), steps);
+            return new Fraction(SqrtAsContinuedFraction(n, steps), steps);
         }
 
         /// <summary>
@@ -92,6 +92,72 @@ namespace FractionLibrary
                 dn = dn1;
                 mn = mn1;
             }
+        }
+
+        /// <summary>
+        /// Gets a list of integers that represent the initial and denominator values in the continued fraction of a given square root.
+        /// </summary>
+        /// <param name="n">The integer to root</param>
+        /// <param name="steps">The maximum amount of steps or continued fraction entries to be had.</param>
+        /// <returns>Initial value and the denominator sequence</returns>
+        public static ValueTuple<BigInteger, List<BigInteger>, bool> SqrtAsContinuedFraction(BigInteger n, int steps)
+        {
+            //find a0, if this is the exact root, we're done
+            BigInteger an = 1;
+            while (an * an < n)
+            {
+                an++;
+            }
+            if (an * an == n)
+            {
+                return new ValueTuple<BigInteger, List<BigInteger>, bool>(an, new List<BigInteger>(), false);
+            }
+            else
+            {
+                an--;
+            }
+            BigInteger initial = an;
+
+            var continuedFraction = new ValueTuple<BigInteger, List<BigInteger>, bool>
+                (initial, new List<BigInteger>(), false);
+
+            var signatures = new List<ValueTuple<BigInteger, BigInteger, BigInteger>>();
+
+            //now we get into the repeating part
+            BigInteger mn = 0;
+            BigInteger dn = 1;
+            while (steps > 0)
+            {
+                steps--;
+                BigInteger mn1 = dn * an - mn;
+                BigInteger dn1 = (n - (mn1 * mn1)) / dn;
+                BigInteger an1 = (initial + mn1) / dn1;
+                var newSignature = new ValueTuple<BigInteger, BigInteger, BigInteger>(an1, mn1, dn1);
+                if (signatures.Count > 0)
+                {
+                    if (signatures.Contains(newSignature))
+                    {
+                        // We have reached the end of the repeating sequence. set the bolean to true.
+                        continuedFraction.Item3 = true;
+                        return continuedFraction;
+                    }
+                    else
+                    {
+                        signatures.Add(newSignature);
+                        continuedFraction.Item2.Add(an1);
+                    }
+                }
+                else
+                {
+                    signatures.Add(newSignature);
+                    continuedFraction.Item2.Add(an1);
+                }
+                //the next a has been found, now we set up to find the new next
+                an = an1;
+                dn = dn1;
+                mn = mn1;
+            }
+            return continuedFraction;
         }
 
         /// <summary>
