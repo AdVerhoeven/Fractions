@@ -227,7 +227,7 @@ namespace FractionLibrary
 
         #region Approximate Methods
         /// <summary>
-        /// Approximates as a Fraction to a double. For full precision use the ApproximatePrecise() method.
+        /// Approximates a Fraction to a double. 
         /// </summary>
         /// <returns></returns>
         public static double Approximate(this Fraction f)
@@ -241,20 +241,9 @@ namespace FractionLibrary
         /// Approximates a Fraction to a floating point string.
         /// The brackets encapsulate the repeating sequence within the real/floating point number.
         /// </summary>
-        /// <returns></returns>
-        public static string ApproximateAsString(this Fraction f)
-        {
-            //HACK: Default limit of 30 decimal digits.
-            return ApproximateAsString(f, 30);
-        }
-
-        /// <summary>
-        /// Approximates a Fraction to a floating point string.
-        /// The brackets encapsulate the repeating sequence within the real/floating point number.
-        /// </summary>
         /// <param name="lim">The amount of digits behind the decimal separator to be found.</param>
         /// <returns>A floating point string.</returns>
-        public static string ApproximateAsString(this Fraction f, int lim)
+        public static string ApproximateAsString(this Fraction f, int lim = 18)
         {
             //TODO: Use stringbuilder?            
             string ans = string.Empty;
