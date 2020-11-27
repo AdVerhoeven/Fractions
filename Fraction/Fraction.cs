@@ -27,7 +27,9 @@ namespace FractionLibrary
         // Explicit conversions
         public static explicit operator BigInteger(Fraction f) => f.Numerator / f.Denominator;
         // a double has a limited precision of 15-17 decimal digits.
-        public static explicit operator double(Fraction f) => double.Parse(f.ApproximateAsString(17));
+        public static explicit operator double(Fraction f) => double.Parse(f.ApproximateAsString());
+        
+        public static explicit operator decimal(Fraction f) => decimal.Parse(f.ApproximateAsString(58));
 
         public static explicit operator int(Fraction f)
         {

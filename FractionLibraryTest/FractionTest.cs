@@ -9,6 +9,11 @@ namespace FractionLibraryTest
     [TestClass]
     public class FractionTest
     {
+        /// <summary>
+        /// Tests if the basic rules of addition.
+        /// a + b = b + a
+        /// a + b + c = c + (b + a) = c + (a + b)
+        /// </summary>
         [TestMethod]
         public void AdditionTest()
         {
@@ -25,9 +30,12 @@ namespace FractionLibraryTest
             //Assert
             Assert.AreEqual(expected, actual);
             Assert.AreEqual(expected, actual2);
-            Assert.AreEqual(frac1 + frac2 + frac3, frac3 + frac2 + frac1);
+            Assert.AreEqual(frac1 + frac2 + frac3, frac3 + expected);
         }
 
+        /// <summary>
+        /// Test subtraction.
+        /// </summary>
         [TestMethod]
         public void SubtractionTest()
         {
@@ -43,6 +51,10 @@ namespace FractionLibraryTest
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// Test multiplication rules
+        /// 
+        /// </summary>
         [TestMethod]
         public void MultiplicationTest()
         {
@@ -61,6 +73,9 @@ namespace FractionLibraryTest
             Assert.AreEqual((x * y) * z, x * (y * z));
         }
 
+        /// <summary>
+        /// Test basic division rules
+        /// </summary>
         [TestMethod]
         public void DivisionTest()
         {
@@ -76,6 +91,9 @@ namespace FractionLibraryTest
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// Test the Pow() method.
+        /// </summary>
         [TestMethod]
         public void PowerTest()
         {
@@ -95,6 +113,9 @@ namespace FractionLibraryTest
             Assert.AreNotEqual(actual, fraction);
         }
 
+        /// <summary>
+        /// Test the Sqrt() method.
+        /// </summary>
         [TestMethod]
         public void SqrtTest()
         {
@@ -108,6 +129,9 @@ namespace FractionLibraryTest
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// Test if we can reverse the square of a fraction by taking the root
+        /// </summary>
         [TestMethod]
         public void FracPowToSqrtTest()
         {
@@ -128,27 +152,12 @@ namespace FractionLibraryTest
         {
             //Arrange
             var expected = FractionMath.Sqrt(new Fraction(1, n));
-            // These two will fail to pass all the tests.
-            //var expectedString = expected.ApproximateAsString();
-            //var expectedDouble = expected.Approximate();
 
             //Act
             var actual = new Fraction(FractionMath.Sqrt(n), n);
 
-            // These two will fail to pass all the tests.
-            //var actualString = actual.ApproximateAsString();            
-            //var actualDouble = actual.Approximate();
-
-
             //Assert
             Assert.AreEqual((double)expected, (double)actual, "(double)");
-
-            // These two will fail to pass all the tests.
-            //Assert.AreEqual(expectedDouble, actualDouble, "Approximate()");
-            //for (int i = 0; i < actualString.Length; i++)
-            //{
-            //    Assert.AreEqual(expectedString[i], actualString[i], $"ApproximateAsString() Mismatched at digit: #{i}");
-            //}            
         }
 
         private static IEnumerable<object[]> GetPrimes()

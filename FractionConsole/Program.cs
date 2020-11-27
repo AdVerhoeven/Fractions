@@ -12,20 +12,23 @@ namespace FractionConsole
     {
         static void Main(string[] args)
         {
-            //var rootThree = FractionMath.Sqrt(3);
-            //Console.WriteLine($"double.Parse({rootThree.ApproximateAsString()}) = {rootThree.Approximate()}");
-            //Console.WriteLine($"double.Parse({(rootThree * rootThree).ApproximateAsString()}) = {(rootThree * rootThree).Approximate()}");
-            //Console.WriteLine($"{rootThree.ToString()} == { rootThree.ToString("b")}");
+            var rootThree = FractionMath.Sqrt(3);
+            Console.WriteLine($"double.Parse({rootThree.ApproximateAsString()}) = {rootThree.Approximate()}");
+            Console.WriteLine($"double.Parse({(rootThree * rootThree).ApproximateAsString()}) = {(rootThree * rootThree).Approximate()}");
+            Console.WriteLine($"{rootThree.ToString()} == { rootThree.ToString("b")}");
 
-            //Euler71();
+            Euler71();
             //Euler73();
             //Euler64();
-            Euler72();
+            //Euler72();
 
             Console.WriteLine("Press <enter> to continue...");
             Console.ReadLine();
         }
 
+        /// <summary>
+        /// Project Euler 72, Counting Fractions
+        /// </summary>
         private static void Euler72()
         {
             BigInteger count = 0;
@@ -65,12 +68,16 @@ namespace FractionConsole
                  }
                  if (impropers > count)
                  {
-                     throw new Exception("fuck me");
+                     throw new Exception("Something went terribly wrong, we cannot have more improper fractions than fractions because it is a subset.");
                  }
              });
             Console.WriteLine(count);
         }
 
+
+        /// <summary>
+        /// Project euler 64, Odd period square roots
+        /// </summary>
         private static void Euler64()
         {
             int count = 0;
@@ -83,6 +90,9 @@ namespace FractionConsole
             Console.WriteLine(count);
         }
 
+        /// <summary>
+        /// Project euler 73, Counting fractions in a range
+        /// </summary>
         private static void Euler73()
         {
             var bottomLimit = new Fraction(1, 3);
@@ -105,6 +115,9 @@ namespace FractionConsole
             Console.WriteLine(count);
         }
 
+        /// <summary>
+        /// Project euler 71, Ordered fractions.
+        /// </summary>
         private static void Euler71()
         {
             var limit = new Fraction(3, 7);
