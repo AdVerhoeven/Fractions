@@ -227,17 +227,6 @@ namespace FractionLibrary
 
         #region Approximate Methods
         /// <summary>
-        /// Approximates a Fraction to a double. 
-        /// </summary>
-        /// <returns></returns>
-        public static double Approximate(this Fraction f)
-        {
-            var t = (double)f.Numerator / (double)f.Denominator;
-            // A double has a limited precision of 15-17 decimal digits.
-            return (double.IsNaN(t)) ? double.Parse(ApproximateAsString(f)) : t;
-        }
-
-        /// <summary>
         /// Approximates a Fraction to a floating point string.
         /// The brackets encapsulate the repeating sequence within the real/floating point number.
         /// </summary>
