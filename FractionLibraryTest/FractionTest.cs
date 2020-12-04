@@ -281,7 +281,7 @@ namespace FractionLibraryTest
         public void SqrtOfTwoTest()
         {
             //Arrange
-            var expected = new Fraction(99, 70); // The fifth convergent of the continued fraction
+            var expected = new Fraction(99, 70); // The fifth convergent of the continued fraction of the square root of 2
 
             //Act
             var actual = FractionMath.Sqrt(2, 5);

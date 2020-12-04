@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Numerics;
 using System.Text;
 
@@ -347,6 +348,70 @@ namespace FractionLibrary
             if (formatProvider == null)
                 return ToString();
             return ToString();
+        }
+
+        /// <summary>
+        /// Approximates a Fraction to a floating point string.
+        /// The brackets encapsulate the repeating sequence within the real/floating point number.
+        /// </summary>
+        /// <param name="lim">The amount of digits behind the decimal separator to be found.</param>
+        /// <returns>A floating point string.</returns>
+        public string ApproximateAsString(int lim = 18)
+        {
+            //TODO: Use stringbuilder?            
+            string ans = string.Empty;
+
+            BigInteger numerator = this.Numerator;
+            BigInteger denominator = this.Denominator;
+            bool zero = false;
+            // Keep a list of numerators once we passed the decimal separator to prevent calculating an ever repeating sequence.
+            List<BigInteger> numerators = new List<BigInteger>();
+
+            while (numerator != 0)
+            {
+                // Perform long divison on the fraction to find the right digits.
+                if (numerator > denominator && !zero)
+                {
+                    BigInteger quotient = numerator / denominator;
+                    BigInteger remainder = numerator % denominator;
+                    // Add the new digit and set the numerator to the remainder to continue with the long division.
+                    ans += quotient.ToString();
+                    numerator = remainder;
+                }
+                // Once we have calculated the whole numbers we get into this part.
+                if (zero)
+                {
+                    // Check how many digits behind the decimal separator are still left to calculate.
+                    if (lim >= 1)
+                    {
+                        // The next digit
+                        BigInteger quotient = (numerator * 10) / denominator;
+                        // The remainder
+                        BigInteger remainder = (numerator * 10) % denominator;
+                        ans += quotient.ToString();
+                        // To prevent doing continueing a endlessly repeating fraction (like 0.33...) add the current numerator to a list.
+                        numerators.Add(numerator);
+                        // Set the numerator to the remainder.
+                        numerator = remainder;
+                        // We have just calculated one more digit behind the decimal separator
+                        lim--;
+                        continue;
+                    }
+                    break;
+                }
+                // If our numerator is smaller than the denominator at some point during the long division we have reached the decimal separator.
+                if (numerator < denominator)
+                {
+                    //Check if we actually have any whole numbers leading the decimal separator.
+                    if (ans == string.Empty)
+                    {
+                        ans = "0";
+                    }
+                    ans += CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+                    zero = true;
+                }
+            }
+            return ans;
         }
         #endregion
 
