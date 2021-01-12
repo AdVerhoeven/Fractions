@@ -19,17 +19,22 @@ namespace FractionLibrary
         // Implicit Convserions
         public static implicit operator Fraction(BigInteger b) => new Fraction(b, 1);
         public static implicit operator Fraction(int i) => new Fraction(i, 1);
+
         // NOTE: We do not really need these implicit conversions since it will not be used most of the time, it could however be added. 
         // BigIntegers have the implicit conversions so the BigInteger conversion should suffice for most situations.
-        //public static implicit operator Fraction(long l) => new Fraction(l, 1);
-        //public static implicit operator Fraction(short s) => new Fraction(s, 1);
-        //public static implicit operator Fraction(ulong ul) => new Fraction(ul, 1);
+        public static implicit operator Fraction(uint ui) => new Fraction(ui, 1);
+        public static implicit operator Fraction(long l) => new Fraction(l, 1);
+        public static implicit operator Fraction(ulong ul) => new Fraction(ul, 1);
+        public static implicit operator Fraction(short s) => new Fraction(s, 1);
+        public static implicit operator Fraction(ushort us) => new Fraction(us, 1);
+        public static implicit operator Fraction(sbyte sb) => new Fraction(sb, 1);
+        public static implicit operator Fraction(byte b) => new Fraction(b, 1);
 
         // Explicit conversions
         public static explicit operator BigInteger(Fraction f) => f.Numerator / f.Denominator;
         // a double has a limited precision of 15-17 decimal digits.
         public static explicit operator double(Fraction f) => double.Parse(f.ApproximateAsString());
-        
+
         public static explicit operator decimal(Fraction f) => decimal.Parse(f.ApproximateAsString(58));
 
         public static explicit operator int(Fraction f)
@@ -276,7 +281,7 @@ namespace FractionLibrary
         {
             var c = a - b;
             //if a - b results in 0, it is false, otherwise return if a - b is larger than 0.
-            return c.Numerator != 0 ? c.Numerator > 0 : false;
+            return c.Numerator != 0 && c.Numerator > 0;
         }
         public static bool operator <(Fraction a, Fraction b) => b > a;
         public static bool operator >=(Fraction a, Fraction b) => a == b || a > b;
