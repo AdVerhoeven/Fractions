@@ -27,7 +27,6 @@ namespace FractionLibrary
             {
                 throw new ArgumentException($"Cannot take a negative amount of steps");
             }
-            //HACK: default precision of 30, more can/could be achieved.
             return new Fraction(SqrtAsContinuedFraction(n, steps), steps);
         }
 
@@ -166,7 +165,7 @@ namespace FractionLibrary
         /// </summary>
         /// <param name="f">The fraction to take the root from</param>
         /// <returns>The square root of f</returns>
-        public static Fraction Sqrt(this Fraction f)
+        public static Fraction Sqrt(this Fraction f, int steps = 30)
         {
             // Check if the fraction is 1, this is WAY faster than using the method below
             if (f.Numerator == f.Denominator)
@@ -180,8 +179,8 @@ namespace FractionLibrary
             try
             {
                 // Sqrt(a/b) == Sqrt(a)/Sqrt(b) 
-                var num = Sqrt((int)f.Numerator);
-                var den = Sqrt((int)f.Denominator);
+                var num = Sqrt((int)f.Numerator, steps);
+                var den = Sqrt((int)f.Denominator, steps);
                 return new Fraction(num, den);
             }
             catch (InvalidCastException ex)

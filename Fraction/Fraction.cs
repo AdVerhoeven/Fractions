@@ -341,7 +341,6 @@ namespace FractionLibrary
             }
         }
 
-        // TODO: Implement properly?
         /// <summary>
         /// Not implemented do not use.
         /// </summary>
@@ -363,8 +362,8 @@ namespace FractionLibrary
         /// <returns>A floating point string.</returns>
         public string ApproximateAsString(int lim = 18)
         {
-            //TODO: Use stringbuilder?            
-            string ans = string.Empty;
+            // 0. lim * x is the minimum amount of characters/digits in our result.
+            StringBuilder sb = new StringBuilder(lim + 2);
 
             BigInteger numerator = this.Numerator;
             BigInteger denominator = this.Denominator;
@@ -380,7 +379,7 @@ namespace FractionLibrary
                     BigInteger quotient = numerator / denominator;
                     BigInteger remainder = numerator % denominator;
                     // Add the new digit and set the numerator to the remainder to continue with the long division.
-                    ans += quotient.ToString();
+                    sb.Append(quotient.ToString());
                     numerator = remainder;
                 }
                 // Once we have calculated the whole numbers we get into this part.
@@ -393,7 +392,7 @@ namespace FractionLibrary
                         BigInteger quotient = (numerator * 10) / denominator;
                         // The remainder
                         BigInteger remainder = (numerator * 10) % denominator;
-                        ans += quotient.ToString();
+                        sb.Append(quotient.ToString());
                         // To prevent doing continueing a endlessly repeating fraction (like 0.33...) add the current numerator to a list.
                         numerators.Add(numerator);
                         // Set the numerator to the remainder.
@@ -408,15 +407,15 @@ namespace FractionLibrary
                 if (numerator < denominator)
                 {
                     //Check if we actually have any whole numbers leading the decimal separator.
-                    if (ans == string.Empty)
+                    if (sb.Length == 0)
                     {
-                        ans = "0";
+                        sb.Append(0);
                     }
-                    ans += CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+                    sb.Append(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator);
                     zero = true;
                 }
             }
-            return ans;
+            return sb.ToString();
         }
         #endregion
 

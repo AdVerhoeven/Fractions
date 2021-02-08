@@ -35,6 +35,8 @@ namespace FractionLibraryTest
 
         /// <summary>
         /// Test subtraction.
+        /// a - b = c
+        /// c + b = a
         /// </summary>
         [TestMethod]
         public void SubtractionTest()
@@ -49,11 +51,11 @@ namespace FractionLibraryTest
 
             //Assert
             Assert.AreEqual(expected, actual);
+            Assert.AreEqual(frac1, (frac1 - frac2) + frac2);
         }
 
         /// <summary>
         /// Test multiplication rules
-        /// 
         /// </summary>
         [TestMethod]
         public void MultiplicationTest()
@@ -109,12 +111,10 @@ namespace FractionLibraryTest
 
             //Assert
             Assert.AreEqual(expected, actual);
-            Assert.AreNotSame(actual, fraction);
-            Assert.AreNotEqual(actual, fraction);
         }
 
         /// <summary>
-        /// Test the Sqrt() method.
+        /// Test the Sqrt() method. A very basic check wether the square root of 4 is 2.
         /// </summary>
         [TestMethod]
         public void SqrtTest()
@@ -146,6 +146,11 @@ namespace FractionLibraryTest
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// By definition, sqrt(1/x) = 1/sqrt(x) = sqrt(x)/x
+        /// However, a prime number has no rational root.
+        /// </summary>
+        /// <param name="n"></param>
         [TestMethod]
         [DynamicData(nameof(GetPrimes), DynamicDataSourceType.Method)]
         public void FracSqrtTest(int n)
@@ -154,12 +159,18 @@ namespace FractionLibraryTest
             var expected = FractionMath.Sqrt(new Fraction(1, n));
 
             //Act
-            var actual = new Fraction(FractionMath.Sqrt(n), n);
+            var actual = new Fraction(1, FractionMath.Sqrt(n));
+            var actually = new Fraction(FractionMath.Sqrt(n), n);
 
             //Assert
-            Assert.AreEqual((double)expected, (double)actual, "(double)");
+            Assert.AreEqual((double)expected, (double)actual);
+            Assert.AreEqual((double)expected, (double)actually);
         }
 
+        /// <summary>
+        /// Generate primes to test the precision of the double cast and square root operation.
+        /// </summary>
+        /// <returns></returns>
         private static IEnumerable<object[]> GetPrimes()
         {
             var maxPrime = 1000;
@@ -189,6 +200,10 @@ namespace FractionLibraryTest
             }
         }
 
+        /// <summary>
+        /// Test wether the inverse operator works as intended.
+        /// (x/y) = ~(y/x)
+        /// </summary>
         [TestMethod]
         public void InverseTest()
         {
@@ -203,6 +218,10 @@ namespace FractionLibraryTest
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// test wether the inverse results the same as when one were to use a negative power.
+        /// x to the power -1 = 1/x
+        /// </summary>
         [TestMethod]
         public void InverseAndPowerTest()
         {
@@ -216,25 +235,27 @@ namespace FractionLibraryTest
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// Test wether multiplying or dividing with the Identity changes the fraction (should not happen).
+        /// </summary>
         [TestMethod]
         public void IdentityTest()
         {
             //Arrange
-            var expected = Fraction.Identity;
+            var expected = new Fraction(1, 11);
 
             //Act
-            var actualMult = Fraction.Identity * Fraction.Identity;
-            var actualDiv = Fraction.Identity / Fraction.Identity;
-            var actualPow = Fraction.Identity.Pow(10);
-            var actualSqrt = Fraction.Identity.Sqrt();
+            var actualMult = expected * Fraction.Identity;
+            var actualDiv = expected / Fraction.Identity;
 
             //Assert
             Assert.AreEqual(expected, actualMult);
             Assert.AreEqual(expected, actualDiv);
-            Assert.AreEqual(expected, actualPow);
-            Assert.AreEqual(expected, actualSqrt);
         }
 
+        /// <summary>
+        /// Test implicit casting.
+        /// </summary>
         [TestMethod]
         public void ImplicitBigIntegerTest()
         {
@@ -249,6 +270,9 @@ namespace FractionLibraryTest
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [TestMethod]
         public void ContinuedFractionTest()
         {
@@ -261,8 +285,12 @@ namespace FractionLibraryTest
 
             //Assert
             // This test is mostly to test for divide by zero exceptions that could be thrown.
+            Assert.IsNotNull(continuedFraction);
         }
 
+        /// <summary>
+        /// Test wether 0 remains 0 when taking its root. No exceptions should be thrown.
+        /// </summary>
         [TestMethod]
         public void SqrtOfZeroTest()
         {
@@ -277,17 +305,55 @@ namespace FractionLibraryTest
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// Test if convergent series converge as intended.
+        /// </summary>
         [TestMethod]
         public void SqrtOfTwoTest()
         {
             //Arrange
-            var expected = new Fraction(99, 70); // The fifth convergent of the continued fraction of the square root of 2
+            //The fifth convergent of the continued fraction of the square root of 2
+            var expected = new Fraction(99, 70);
 
             //Act
             var actual = FractionMath.Sqrt(2, 5);
 
             //Assert
             Assert.AreEqual(expected, actual);
+        }
+
+        /// <summary>
+        /// Test wether the power of the square root of a fraction returns said fraction.
+        /// This only works if both the numerator and the denominator have a rational root.
+        /// </summary>
+        [TestMethod]
+        [DynamicData(nameof(Nums), DynamicDataSourceType.Method)]
+        public void PowerOfSqrtTest(int x, int y)
+        {
+            //Arrange
+            var expected = new Fraction(x, y);
+
+            //Act
+            var actual = new Fraction(x, y);
+            actual = actual.Sqrt().Pow(2);
+
+            //Assert
+            Assert.AreEqual(expected, actual);
+        }
+
+        /// <summary>
+        /// Generate a few squares.
+        /// </summary>
+        /// <returns></returns>
+        public static IEnumerable<object[]> Nums()
+        {
+            for (int i = 1; i < 20; i++)
+            {
+                for (int j = 1; j < 20; j++)
+                {
+                    yield return new object[] { i * i , j * j};
+                }
+            }
         }
     }
 }
