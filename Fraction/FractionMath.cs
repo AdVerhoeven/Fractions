@@ -11,6 +11,17 @@ namespace FractionLibrary
     /// </summary>
     public static class FractionMath
     {
+        #region Constants
+        /// <summary>
+        /// Relative error of 0.00_000_008 or 8*10^-10
+        /// </summary>
+        public static readonly Fraction PI = new Fraction(355, 113);
+
+        public static readonly Fraction E = new Fraction();
+
+        public static readonly Fraction GoldenRatio = new Fraction(continuedFractions: ((BigInteger)1, new List<BigInteger>(1) { 1 }, true), 100);
+        #endregion
+
         #region Square root Methods
         /// <summary>
         /// Takes the square root out of a number by approximating it with a continued fraction.

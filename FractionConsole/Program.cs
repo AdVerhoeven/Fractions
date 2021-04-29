@@ -189,7 +189,7 @@ namespace FractionConsole
             {
                 var limit = new Fraction(3, 7);
                 Fraction ans = new Fraction(2, 5);
-                // for i <= 1.000.000 e.g. 1000000 order al proper fractions (fractions smaller than 1)
+                // for i <= 1.000.000 e.g. 1000000 order all proper fractions (fractions smaller than 1)
                 for (int i = 500_000; i <= 1_000_000; i++)
                 {
 
@@ -205,29 +205,5 @@ namespace FractionConsole
                 Console.WriteLine($"The fraction you are looking for is: {ans}");
             });
         }
-
-        //private static bool Execute(string projectName, string expectedTime)
-        //{
-        //    Console.WriteLine($"\nThe code that you are about to execute might take a long time to complete.\n" +
-        //        $"The expected runtime is: {expectedTime}\n\n" +
-        //        $"Do you wish to execute this code: {projectName} Y/N\n");
-        //    while (true)
-        //    {
-        //        var key = Console.ReadKey(true);
-        //        switch (key.KeyChar)
-        //        {
-        //            case 'y':
-        //            case 'Y':
-        //                Console.WriteLine($"Executing: {projectName}");
-        //                return true;
-        //            case 'n':
-        //            case 'N':
-        //                Console.WriteLine($"Skipped Execution of: {projectName}");
-        //                return false;
-        //            default:
-        //                break;
-        //        }
-        //    }
-        //}
     }
 }
