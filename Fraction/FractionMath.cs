@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Numerics;
+﻿using System.Numerics;
 
 namespace FractionLibrary
 {
@@ -51,8 +48,11 @@ namespace FractionLibrary
         /// </summary>
         /// <param name="n">The integer to square root</param>
         /// <param name="steps">The maximum amount of steps or continued fraction entries to be had.</param>
-        /// <returns>Initial value and the denominator sequence used to approach the square root of <paramref name="n"/></returns>
-        public static (BigInteger intial, List<BigInteger> denominatorSequence, bool stopped) SqrtAsContinuedFraction(BigInteger n)
+        /// <returns>
+        /// <para>Initial value and the denominator sequence used to approach the square root of <paramref name="n"/>.</para>
+        /// <para>The boolean at the end will be false if there was no duplicate found (yet), or true if the sequence repeats.</para>
+        /// </returns>
+        public static (BigInteger intial, List<BigInteger> denominatorSequence, bool repeats) SqrtAsContinuedFraction(BigInteger n)
         {
             //find a0, if this is the exact root, we're done
             BigInteger an = 1;
@@ -70,7 +70,7 @@ namespace FractionLibrary
             }
             BigInteger initial = an;
 
-            (BigInteger intial, List<BigInteger> denominatorSequence, bool stopped) continuedFraction = 
+            (BigInteger intial, List<BigInteger> denominatorSequence, bool repeats) continuedFraction = 
                 new(initial, new List<BigInteger>(), false);
 
             var signatures = new List<ValueTuple<BigInteger, BigInteger, BigInteger>>();
@@ -89,7 +89,7 @@ namespace FractionLibrary
                     if (signatures.Contains(newSignature))
                     {
                         // We have reached the end of the repeating sequence. set the bolean to true.
-                        continuedFraction.stopped = true;
+                        continuedFraction.repeats = true;
                         return continuedFraction;
                     }
                     else
@@ -115,8 +115,11 @@ namespace FractionLibrary
         /// </summary>
         /// <param name="n">The integer to square root</param>
         /// <param name="steps">The maximum amount of steps or continued fraction entries to be had.</param>
-        /// <returns>Initial value and the denominator sequence used to approach the square root of <paramref name="n"/></returns>
-        public static (BigInteger intial, List<BigInteger> denominatorSequence, bool stopped) SqrtAsContinuedFraction(BigInteger n, int steps)
+        /// <returns>
+        /// <para>Initial value and the denominator sequence used to approach the square root of <paramref name="n"/>.</para>
+        /// <para>The boolean at the end will be false if there was no duplicate found (yet), or true if the sequence repeats.</para>
+        /// </returns>
+        public static (BigInteger intial, List<BigInteger> denominatorSequence, bool repeats) SqrtAsContinuedFraction(BigInteger n, int steps)
         {
             //find a0, if this is the exact root, we're done
             BigInteger an = 1;
@@ -134,7 +137,7 @@ namespace FractionLibrary
             }
             BigInteger initial = an;
 
-            (BigInteger intial, List<BigInteger> denominatorSequence, bool stopped) continuedFraction =
+            (BigInteger intial, List<BigInteger> denominatorSequence, bool repeats) continuedFraction =
                 new(initial, new List<BigInteger>(), false);
 
             var signatures = new List<ValueTuple<BigInteger, BigInteger, BigInteger>>();
@@ -154,7 +157,7 @@ namespace FractionLibrary
                     if (signatures.Contains(newSignature))
                     {
                         // We have reached the end of the repeating sequence. set the bolean to true.
-                        continuedFraction.stopped = true;
+                        continuedFraction.repeats = true;
                         return continuedFraction;
                     }
                     else
