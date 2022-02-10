@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FractionLibrary;
-using System.Numerics;
+﻿using FractionLibrary;
 using System.Diagnostics;
+using System.Numerics;
 
 namespace FractionConsole
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             Console.WriteLine("A quick start to show how precise this class can be. We calculate the root of 3 and cast at different moments");
             Console.WriteLine();
@@ -19,16 +14,16 @@ namespace FractionConsole
             var rootThreeFrac = FractionMath.Sqrt(3);
             var rootThreeDouble = Math.Sqrt(3);
             Console.WriteLine($"String approximation up to 18 digits: {rootThreeFrac.ApproximateAsString()}" +
-                $" \nThe double of the same fraction object: {(double)rootThreeFrac}" + 
+                $" \nThe double of the same fraction object: {(double)rootThreeFrac}" +
                 $" \nMath.Sqrt(3): {rootThreeDouble}" +
-                $" \nThe difference between the two: {rootThreeDouble-(double)rootThreeFrac} (math-frac)");
+                $" \nThe difference between the two: {rootThreeDouble - (double)rootThreeFrac} (math-frac)");
             Console.WriteLine($"The square of sqrt(3) as string: {(rootThreeFrac * rootThreeFrac).ApproximateAsString()}) = {(double)(rootThreeFrac * rootThreeFrac)} as double");
             Console.WriteLine($"The actual fraction: {rootThreeFrac}");
             Console.WriteLine("It is possible to format a fraction to take out the wholes or integers of the fraction object.");
-            Console.WriteLine($"The square root of three then becomes: {rootThreeFrac.ToString("b")}");
+            Console.WriteLine($"The square root of three then becomes: {rootThreeFrac:b}");
             Console.WriteLine($"It is also possible to get a less precise but smaller fraction " +
                 $"that approaches the square root of three." +
-                $"As an example {FractionMath.Sqrt(3,5)} approaches the square root of three.");
+                $"As an example {FractionMath.Sqrt(3, 5)} approaches the square root of three.");
             Console.WriteLine();
 
             Console.WriteLine("The next few samples of code have execution times between 0 seconds up till several minutes.");
@@ -67,7 +62,7 @@ namespace FractionConsole
                 }
             }
 
-            Stopwatch stopwatch = new Stopwatch();
+            Stopwatch stopwatch = new();
             stopwatch.Start();
             t.Start();
             t.Wait();
@@ -84,7 +79,7 @@ namespace FractionConsole
         /// <summary>
         /// Project Euler 72, Counting Fractions
         /// </summary>
-        private static Task Euler72() 
+        private static Task Euler72()
         {
             return new Task(() =>
             {
@@ -157,8 +152,6 @@ namespace FractionConsole
         {
             return new Task(() =>
             {
-
-
                 var bottomLimit = new Fraction(1, 3);
                 var topLimit = new Fraction(1, 2);
                 //var fractions = new List<Fraction>();
@@ -188,7 +181,7 @@ namespace FractionConsole
             return new Task(() =>
             {
                 var limit = new Fraction(3, 7);
-                Fraction ans = new Fraction(2, 5);
+                var ans = new Fraction(2, 5);
                 // for i <= 1.000.000 e.g. 1000000 order all proper fractions (fractions smaller than 1)
                 for (int i = 500_000; i <= 1_000_000; i++)
                 {
