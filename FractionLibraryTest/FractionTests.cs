@@ -1,13 +1,11 @@
 ﻿using FractionLibrary;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
 using System.Numerics;
 
 namespace FractionLibraryTest
 {
     [TestClass]
-    public class FractionTest
+    public class FractionTests
     {
         /// <summary>
         /// Tests if the basic rules of addition.
@@ -351,7 +349,7 @@ namespace FractionLibraryTest
             {
                 for (int j = 1; j < 20; j++)
                 {
-                    yield return new object[] { i * i , j * j};
+                    yield return new object[] { i * i, j * j };
                 }
             }
         }
