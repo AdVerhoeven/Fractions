@@ -15,19 +15,24 @@ namespace FractionLibrary
         /// <summary>
         /// Relative error of 0.00_000_008 or 8*10^-10
         /// </summary>
-        public static readonly Fraction PI = new Fraction(355, 113);
+        public static readonly Fraction PI = new(355, 113);
 
-        public static readonly Fraction E = new Fraction();
+        //public static readonly Fraction E = new Fraction(); TODO: research if eulers number can be approached with a fraction
 
-        public static readonly Fraction GoldenRatio = new Fraction(continuedFractions: ((BigInteger)1, new List<BigInteger>(1) { 1 }, true), 100);
+        /// <summary>
+        /// A Fraction that approaches the golden ratio after taking 100 steps.
+        /// A more precise answer can be obtained by using a continued fraction consisting of initial value 1 and repeating 1
+        /// </summary>
+        public static readonly Fraction GoldenRatio = new(continuedFractions: (1, new List<BigInteger>(1) { 1 }, true), 100);
         #endregion
 
         #region Square root Methods
         /// <summary>
         /// Takes the square root out of a number by approximating it with a continued fraction.
         /// </summary>
-        /// <param name="n">Returns a fraction </param>
-        /// <returns></returns>
+        /// <param name="n">The input <see cref="BigInteger"/></param>
+        /// <param name="steps">The number of steps to use to calculate the root</param>
+        /// <returns>A fractional approach of the root of <paramref name="n"/> in the given amount of <paramref name="steps"/></returns>
         public static Fraction Sqrt(BigInteger n, int steps = 30)
         {
             if (n < 0)
@@ -44,9 +49,10 @@ namespace FractionLibrary
         /// <summary>
         /// Gets a list of integers that represent the initial and denominator values in the continued fraction of a given square root.
         /// </summary>
-        /// <param name="n">The integer to root</param>
-        /// <returns>Initial value and the denominator sequence</returns>
-        public static ValueTuple<BigInteger, List<BigInteger>, bool> SqrtAsContinuedFraction(BigInteger n)
+        /// <param name="n">The integer to square root</param>
+        /// <param name="steps">The maximum amount of steps or continued fraction entries to be had.</param>
+        /// <returns>Initial value and the denominator sequence used to approach the square root of <paramref name="n"/></returns>
+        public static (BigInteger intial, List<BigInteger> denominatorSequence, bool stopped) SqrtAsContinuedFraction(BigInteger n)
         {
             //find a0, if this is the exact root, we're done
             BigInteger an = 1;
@@ -64,8 +70,8 @@ namespace FractionLibrary
             }
             BigInteger initial = an;
 
-            var continuedFraction = new ValueTuple<BigInteger, List<BigInteger>, bool>
-                (initial, new List<BigInteger>(), false);
+            (BigInteger intial, List<BigInteger> denominatorSequence, bool stopped) continuedFraction = 
+                new(initial, new List<BigInteger>(), false);
 
             var signatures = new List<ValueTuple<BigInteger, BigInteger, BigInteger>>();
 
@@ -83,19 +89,19 @@ namespace FractionLibrary
                     if (signatures.Contains(newSignature))
                     {
                         // We have reached the end of the repeating sequence. set the bolean to true.
-                        continuedFraction.Item3 = true;
+                        continuedFraction.stopped = true;
                         return continuedFraction;
                     }
                     else
                     {
                         signatures.Add(newSignature);
-                        continuedFraction.Item2.Add(an1);
+                        continuedFraction.denominatorSequence.Add(an1);
                     }
                 }
                 else
                 {
                     signatures.Add(newSignature);
-                    continuedFraction.Item2.Add(an1);
+                    continuedFraction.denominatorSequence.Add(an1);
                 }
                 //the next a has been found, now we set up to find the new next
                 an = an1;
@@ -107,10 +113,10 @@ namespace FractionLibrary
         /// <summary>
         /// Gets a list of integers that represent the initial and denominator values in the continued fraction of a given square root.
         /// </summary>
-        /// <param name="n">The integer to root</param>
+        /// <param name="n">The integer to square root</param>
         /// <param name="steps">The maximum amount of steps or continued fraction entries to be had.</param>
-        /// <returns>Initial value and the denominator sequence</returns>
-        public static ValueTuple<BigInteger, List<BigInteger>, bool> SqrtAsContinuedFraction(BigInteger n, int steps)
+        /// <returns>Initial value and the denominator sequence used to approach the square root of <paramref name="n"/></returns>
+        public static (BigInteger intial, List<BigInteger> denominatorSequence, bool stopped) SqrtAsContinuedFraction(BigInteger n, int steps)
         {
             //find a0, if this is the exact root, we're done
             BigInteger an = 1;
@@ -128,8 +134,8 @@ namespace FractionLibrary
             }
             BigInteger initial = an;
 
-            var continuedFraction = new ValueTuple<BigInteger, List<BigInteger>, bool>
-                (initial, new List<BigInteger>(), false);
+            (BigInteger intial, List<BigInteger> denominatorSequence, bool stopped) continuedFraction =
+                new(initial, new List<BigInteger>(), false);
 
             var signatures = new List<ValueTuple<BigInteger, BigInteger, BigInteger>>();
 
@@ -148,19 +154,19 @@ namespace FractionLibrary
                     if (signatures.Contains(newSignature))
                     {
                         // We have reached the end of the repeating sequence. set the bolean to true.
-                        continuedFraction.Item3 = true;
+                        continuedFraction.stopped = true;
                         return continuedFraction;
                     }
                     else
                     {
                         signatures.Add(newSignature);
-                        continuedFraction.Item2.Add(an1);
+                        continuedFraction.denominatorSequence.Add(an1);
                     }
                 }
                 else
                 {
                     signatures.Add(newSignature);
-                    continuedFraction.Item2.Add(an1);
+                    continuedFraction.denominatorSequence.Add(an1);
                 }
                 //the next a has been found, now we set up to find the new next
                 an = an1;
