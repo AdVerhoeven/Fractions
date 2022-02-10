@@ -182,7 +182,7 @@ public struct Fraction : IComparable<Fraction>, IEquatable<Fraction>, IFormattab
     /// </summary>
     /// <param name="continuedFraction">The continued fraction object</param>
     /// <param name="steps">The amount of steps to execute the continued fration.</param>
-    public Fraction((BigInteger initial, List<BigInteger> denominatorSequence, bool repeats) continuedFraction, int steps)
+    public Fraction((BigInteger initial, List<BigInteger> denominatorSequence, bool repeats) continuedFraction, int steps = 30)
     {
         var period = continuedFraction.denominatorSequence;
         var periodLength = period.Count;

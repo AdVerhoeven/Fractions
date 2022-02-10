@@ -138,7 +138,7 @@ class Program
             for (int i = 2; i < 10000; i++)
             {
                 var continuedFrac = FractionMath.SqrtAsContinuedFraction(i);
-                if (continuedFrac.Item2.Count % 2 == 1)
+                if (continuedFrac.denominatorSequence.Count % 2 == 1)
                     count++;
             }
             Console.WriteLine($"The number of odd period square roots is {count}");
