@@ -20,7 +20,7 @@ namespace FractionLibrary
         /// A Fraction that approaches the golden ratio after taking 100 steps.
         /// A more precise answer can be obtained by using a continued fraction consisting of initial value 1 and repeating 1
         /// </summary>
-        public static readonly Fraction GoldenRatio = new(continuedFractions: (1, new List<BigInteger>(1) { 1 }, true), 100);
+        public static readonly Fraction GoldenRatio = new(continuedFraction: (1, new List<BigInteger>(1) { 1 }, true), 100);
         #endregion
 
         #region Square root Methods

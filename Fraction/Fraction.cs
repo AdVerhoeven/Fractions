@@ -48,7 +48,7 @@ namespace FractionLibrary
         public static Fraction Identity { get; } = new Fraction(1, 1);
 
         /// <summary>
-        /// The Nominator or top part of the fraction.
+        /// The Numerator or top part of the fraction.
         /// </summary>
         public BigInteger Numerator
         {
@@ -95,7 +95,7 @@ namespace FractionLibrary
         public bool IsProper => BigInteger.Abs(this.Numerator) < this.Denominator;
 
         /// <summary>
-        /// A reduced fraction is a simplified fraction, e.g. the biggest factor is 1.
+        /// A reduced fraction is a simplified fraction, e.g. the biggest common factor is 1.
         /// </summary>
         public bool IsReduced => GCD(this.numerator, this.denominator) == 1;
         #endregion
@@ -140,10 +140,11 @@ namespace FractionLibrary
                 throw new DivideByZeroException($"Can't divide by zero. {den} is zero");
             }
 
-            Fraction ans = new Fraction(num, 1);
-            ans /= den;
-            numerator = ans.Numerator;
-            denominator = ans.Denominator;
+            this = ~den * num;
+            //Fraction ans = new(num, 1);
+            //ans /= den;
+            //numerator = ans.Numerator;
+            //denominator = ans.Denominator;
         }
 
         /// <summary>
@@ -157,17 +158,11 @@ namespace FractionLibrary
             {
                 throw new DivideByZeroException($"Can't divide by zero. {den} is zero");
             }
-            ////If the bottomside is negative, change the sign of both sides so that only the topside can be negative.
-            //if (b < 0)
-            //{
-            //    a.Numerator *= -1;
-            //    b *= -1;
-            //}
-
-            Fraction ans = new Fraction(1, den);
-            ans = num * ans;
-            numerator = ans.Numerator;
-            denominator = ans.Denominator;
+            this = num / den;
+            //Fraction ans = new(1, den);
+            //ans = num * ans;
+            //numerator = ans.Numerator;
+            //denominator = ans.Denominator;
         }
 
         /// <summary>
@@ -181,28 +176,25 @@ namespace FractionLibrary
             {
                 throw new DivideByZeroException($"Can't divide by zero. {den} is zero");
             }
-            Fraction ans = num / den;
-            numerator = ans.Numerator;
-            denominator = ans.Denominator;
+            this = num / den;
         }
 
         /// <summary>
         /// Approximates a fraction with a given (repeating) sequence.
         /// The sequence can/should not contain any zeroes.
         /// </summary>
-        /// <param name="continuedFractions">The sequence of denominators in the continued fraction.</param>
+        /// <param name="continuedFraction">The continued fraction object</param>
         /// <param name="steps">The amount of steps to execute the continued fration.</param>
-        public Fraction(ValueTuple<BigInteger, List<BigInteger>, bool> continuedFractions, int steps)
+        public Fraction((BigInteger initial, List<BigInteger> denominatorSequence, bool repeats) continuedFraction, int steps)
         {
-            var initial = continuedFractions.Item1;
-            var period = continuedFractions.Item2;
+            var period = continuedFraction.denominatorSequence;
             var periodLength = period.Count;
             if (periodLength == 0)
                 steps = 0;
 
             if (steps == 0)
             {
-                this = new Fraction(initial, 1);
+                this = new Fraction(continuedFraction.initial, 1);
             }
             else
             {
@@ -217,7 +209,7 @@ namespace FractionLibrary
                     //r = period[steps % periodLength] + new Fraction(1/r); 
                 }
                 // At this point we've reached the upper/left part of the continued fraction so we need to add the initial value.
-                this = (initial + this);
+                this = (continuedFraction.initial + this);
             }
         }
         #endregion
@@ -307,7 +299,7 @@ namespace FractionLibrary
         /// Returns the fraction as "(a / b)"
         /// </summary>
         /// <returns></returns>
-        public override string ToString() => $"({this.Numerator} / {this.Denominator})";
+        public override string ToString() => $"({Numerator} / {Denominator})";
 
         /// <summary>
         /// Returns a fraction as "(a / b)" ("G" or "S") or "(a + b / c)" ("B").
@@ -335,7 +327,7 @@ namespace FractionLibrary
                     sb.Append(')');
                     return sb.ToString();
                 default:
-                    throw new FormatException(String.Format("The {0} format string is not supported.", format));
+                    throw new FormatException(string.Format("The {0} format string is not supported.", format));
             }
         }
 
@@ -361,7 +353,7 @@ namespace FractionLibrary
         public string ApproximateAsString(int lim = 18)
         {
             // 0. lim * x is the minimum amount of characters/digits in our result.
-            StringBuilder sb = new StringBuilder(lim + 2);
+            var sb = new StringBuilder(lim + 2);
 
             BigInteger numerator = this.Numerator;
             BigInteger denominator = this.Denominator;
