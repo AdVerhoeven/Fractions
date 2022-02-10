@@ -75,8 +75,8 @@ namespace FractionLibrary
                 }
                 else if (value < 0)
                 {
+                    denominator = value * -1;
                     numerator *= -1;
-                    denominator *= -1;
                 }
                 else
                 {
@@ -113,6 +113,11 @@ namespace FractionLibrary
             {
                 throw new DivideByZeroException($"Can't divide by zero. {den} is zero");
             }
+            if (den < 0)
+            {
+                num *= -1;
+                den *= -1;
+            }
 
             numerator = num;
             denominator = den;
@@ -139,12 +144,8 @@ namespace FractionLibrary
             {
                 throw new DivideByZeroException($"Can't divide by zero. {den} is zero");
             }
-
+            // X diveded by Y over Z equals X times Z over Y
             this = ~den * num;
-            //Fraction ans = new(num, 1);
-            //ans /= den;
-            //numerator = ans.Numerator;
-            //denominator = ans.Denominator;
         }
 
         /// <summary>
@@ -159,10 +160,6 @@ namespace FractionLibrary
                 throw new DivideByZeroException($"Can't divide by zero. {den} is zero");
             }
             this = num / den;
-            //Fraction ans = new(1, den);
-            //ans = num * ans;
-            //numerator = ans.Numerator;
-            //denominator = ans.Denominator;
         }
 
         /// <summary>
@@ -180,8 +177,8 @@ namespace FractionLibrary
         }
 
         /// <summary>
-        /// Approximates a fraction with a given (repeating) sequence.
-        /// The sequence can/should not contain any zeroes.
+        /// <para>The fraction obtained after going through <paramref name="steps"/> steps of the <paramref name="continuedFraction"/> denominatorSequence</para>
+        /// The sequence can/should not contain any zeroes. 
         /// </summary>
         /// <param name="continuedFraction">The continued fraction object</param>
         /// <param name="steps">The amount of steps to execute the continued fration.</param>
