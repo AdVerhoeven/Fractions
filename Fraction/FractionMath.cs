@@ -14,7 +14,7 @@ public static class FractionMath
     /// </summary>
     public static readonly Fraction PI = new(355, 113);
 
-    //public static readonly Fraction E = new Fraction(); TODO: research if eulers number can be approached with a fraction
+    public static readonly Fraction E = new Fraction((2, new List<BigInteger>(){1, 2, 1, 1, 4, 1, 1, 6, 1, 1, 8, 1, 1, 10}, false), 20); //TODO: research if eulers number can be approached with a fraction
 
     /// <summary>
     /// A Fraction that approaches the golden ratio after taking 100 steps.

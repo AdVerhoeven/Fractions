@@ -1,9 +1,10 @@
 ﻿using FractionLibrary;
 using System.Diagnostics;
+using System.Linq;
 using System.Numerics;
+using System.Text;
 
 namespace FractionConsole;
-
 class Program
 {
     static void Main()
@@ -26,6 +27,15 @@ class Program
             $"As an example {FractionMath.Sqrt(3, 5)} approaches the square root of three.");
         Console.WriteLine();
 
+        var doubFracPI = (double)FractionMath.PI;
+        Console.WriteLine($"FractionMath.PI = {FractionMath.PI} or {doubFracPI}");
+        Console.WriteLine($"Math.PI = {Math.PI}");
+        Console.WriteLine($"Difference at index = {StringDiffIndex(Math.PI.ToString(), doubFracPI.ToString())}");
+        var doubFracE = (double)FractionMath.E;
+        Console.WriteLine($"FractionMath.E = {FractionMath.E} or {doubFracE}");
+        Console.WriteLine($"Math.E = {Math.E}");
+        Console.WriteLine($"Difference at index = {StringDiffIndex(Math.E.ToString(), doubFracE.ToString())}");
+
         Console.WriteLine("The next few samples of code have execution times between 0 seconds up till several minutes.");
         ExecuteTask("Project Euler 71, Ordered fractions", "several seconds", Euler71());
         ExecuteTask("Project Euler 73, Counting fractions in a range", "under a minute", Euler73());
@@ -34,6 +44,18 @@ class Program
 
         Console.WriteLine("Press <enter> to continue...");
         Console.ReadLine();
+    }
+
+    private static int StringDiffIndex(string a, string b)
+    {
+        for (int i = 0; i < a.Length; i++)
+        {
+            if(a[i] != b[i])
+            {
+                return i;
+            }
+        }
+        return -1;
     }
     private static bool ExecuteTask(string projectName, string expectedTime, Task t)
     {
@@ -154,8 +176,8 @@ class Program
         {
             var bottomLimit = new Fraction(1, 3);
             var topLimit = new Fraction(1, 2);
-                //var fractions = new List<Fraction>();
-                var count = 0;
+            //var fractions = new List<Fraction>();
+            var count = 0;
 
             for (int i = 1; i <= 12000; i++)
             {
@@ -164,8 +186,8 @@ class Program
                     var f = new Fraction(j, i);
                     if (f.IsReduced && f > bottomLimit && f < topLimit)
                     {
-                            //fractions.Add(f);
-                            count++;
+                        //fractions.Add(f);
+                        count++;
                     }
                 }
             }
@@ -182,8 +204,8 @@ class Program
         {
             var limit = new Fraction(3, 7);
             var ans = new Fraction(2, 5);
-                // for i <= 1.000.000 e.g. 1000000 order all proper fractions (fractions smaller than 1)
-                for (int i = 500_000; i <= 1_000_000; i++)
+            // for i <= 1.000.000 e.g. 1000000 order all proper fractions (fractions smaller than 1)
+            for (int i = 500_000; i <= 1_000_000; i++)
             {
 
                 for (int j = i / 7 * 3; j < i / 7 * 3 + 7; j++)
