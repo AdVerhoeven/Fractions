@@ -213,10 +213,10 @@ public struct Fraction : IComparable<Fraction>, IEquatable<Fraction>, IFormattab
 
     #region Methods
     /// <summary>
-    /// Returns the simplified fraction by dividing the nominator and denominator by their greatest common divisor.
+    /// Simplifies a fraction by dividing the nominator and denominator by their greatest common divisor.
     /// </summary>
-    /// <param name="frac"></param>
-    /// <returns></returns>
+    /// <param name="frac">The original <see cref="Fraction"/></param>
+    /// <returns>A simplified or reduced <see cref="Fraction"/></returns>
     public Fraction Simplify()
     {
         var gcd = GCD(this.Numerator, this.Denominator);
