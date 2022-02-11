@@ -45,8 +45,8 @@ public struct Fraction : IComparable<Fraction>, IEquatable<Fraction>, IFormattab
     #region Properties
     private BigInteger numerator;
     private BigInteger denominator;
-    public static Fraction Identity { get; } = new Fraction(1, 1);
-
+    private static readonly Fraction identity = new(1, 1);
+    public static Fraction Identity => identity;
     /// <summary>
     /// The Numerator or top part of the fraction.
     /// </summary>
