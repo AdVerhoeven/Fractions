@@ -216,6 +216,23 @@ public class FractionTests
         Assert.AreEqual(expected, actual);
     }
 
+    [TestMethod]
+    public void EpsilonPITest()
+    {
+        Assert.AreEqual(Math.PI, (double)FractionMath.PI, double.Epsilon);
+    }
+    [TestMethod]
+    public void EpsilonETest()
+    {
+        Assert.AreEqual(Math.E, (double)FractionMath.E, double.Epsilon);
+    }
+    [TestMethod]
+    public void EpsilonGoldenRatioTest()
+    {
+        double goldenRatio = (1 + Math.Sqrt(5)) / 2;
+        Assert.AreEqual(goldenRatio, (double)FractionMath.GoldenRatio, double.Epsilon);
+    }
+
     /// <summary>
     /// test wether the inverse results the same as when one were to use a negative power.
     /// x to the power -1 = 1/x
@@ -325,7 +342,7 @@ public class FractionTests
     /// This only works if both the numerator and the denominator have a rational root.
     /// </summary>
     [TestMethod]
-    [DynamicData(nameof(Nums), DynamicDataSourceType.Method)]
+    [DynamicData(nameof(Squares), DynamicDataSourceType.Method)]
     public void PowerOfSqrtTest(int x, int y)
     {
         //Arrange
@@ -343,7 +360,7 @@ public class FractionTests
     /// Generate a few squares.
     /// </summary>
     /// <returns></returns>
-    public static IEnumerable<object[]> Nums()
+    public static IEnumerable<object[]> Squares()
     {
         for (int i = 1; i < 20; i++)
         {
