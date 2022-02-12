@@ -36,10 +36,10 @@ Comparison operators:
 
 ==, equals
 !=, not equals
->, greater than
-<, lesser than
->=, greater than or equal
-<=, lesser than or equal
+\>, greater than
+\<, lesser than
+\>=, greater than or equal
+\<=, lesser than or equal
 
 Casting operators:
 
