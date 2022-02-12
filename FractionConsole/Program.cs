@@ -1,8 +1,6 @@
 ﻿using FractionLibrary;
 using System.Diagnostics;
-using System.Linq;
 using System.Numerics;
-using System.Text;
 
 namespace FractionConsole;
 class Program
@@ -50,7 +48,7 @@ class Program
     {
         for (int i = 0; i < a.Length; i++)
         {
-            if(a[i] != b[i])
+            if (a[i] != b[i])
             {
                 return i;
             }
