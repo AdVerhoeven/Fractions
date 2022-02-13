@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using System.Text;
 
 namespace FractionLibrary;
 
@@ -22,6 +23,13 @@ public struct ContinuedFraction
         Initial = initial;
         DenominatorSequence = denominatorSequence;
         Repeats = repeats;
+    }
+
+    public ContinuedFraction(ValueTuple<BigInteger, List<BigInteger>, bool> tuple)
+    {
+        Initial = tuple.Item1;
+        DenominatorSequence = tuple.Item2;
+        Repeats = tuple.Item3;
     }
 
     /// <summary>
@@ -155,5 +163,21 @@ public struct ContinuedFraction
             mn = mn1;
         }
         return continuedFraction;
+    }
+
+    public override string ToString()
+    {
+        var sb = new StringBuilder(DenominatorSequence.Count + 6);
+        sb.Append('[');
+        sb.Append(Initial);
+        sb.Append(';');
+        foreach (var number in DenominatorSequence)
+        {
+            sb.Append(number);
+            sb.Append(", ");
+        }
+        sb.Remove(sb.Length - 2, 2);
+        sb.Append(']');
+        return sb.ToString();
     }
 }
