@@ -180,7 +180,7 @@ public struct Fraction : IComparable<Fraction>, IEquatable<Fraction>, IFormattab
     /// <para>The fraction obtained after going through <paramref name="steps"/> steps of the <paramref name="continuedFraction"/> denominatorSequence</para>
     /// The sequence can/should not contain any zeroes. 
     /// </summary>
-    /// <param name="continuedFraction">The continued fraction object</param>
+    /// <param name="continuedFraction">The continued fraction ValueTuple representation</param>
     /// <param name="steps">The amount of steps to execute the continued fration.</param>
     public Fraction((BigInteger initial, List<BigInteger> denominatorSequence, bool repeats) continuedFraction, int steps = 30)
     {
@@ -207,6 +207,40 @@ public struct Fraction : IComparable<Fraction>, IEquatable<Fraction>, IFormattab
             }
             // At this point we've reached the upper/left part of the continued fraction so we need to add the initial value.
             this = (continuedFraction.initial + this);
+        }
+    }
+
+    /// <summary>
+    /// <para>The fraction obtained after going through <paramref name="steps"/> steps of the <paramref name="continuedFraction"/> denominatorSequence</para>
+    /// The sequence can/should not contain any zeroes. 
+    /// </summary>
+    /// <param name="continuedFraction">The continued fraction object</param>
+    /// <param name="steps">The amount of steps to execute the continued fration.</param>
+    public Fraction(ContinuedFraction continuedFraction, int steps = 30)
+    {
+        var period = continuedFraction.DenominatorSequence;
+        var periodLength = period.Count;
+        if (periodLength == 0)
+            steps = 0;
+
+        if (steps == 0)
+        {
+            this = new Fraction(continuedFraction.Initial, 1);
+        }
+        else
+        {
+            steps--;
+            // An invalid denominator list (e.g. one that contains zero) will throw a divide by zero exception
+            this = new Fraction(1, period[steps % periodLength]);
+            while (steps > 0)
+            {
+                //a + 1/r
+                steps--;
+                this = 1 / (period[steps % periodLength] + this);
+                //r = period[steps % periodLength] + new Fraction(1/r); 
+            }
+            // At this point we've reached the upper/left part of the continued fraction so we need to add the initial value.
+            this = (continuedFraction.Initial + this);
         }
     }
     #endregion
