@@ -1,4 +1,5 @@
-﻿using FractionLibrary;
+﻿using FluentAssertions;
+using FractionLibrary;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Numerics;
 
@@ -29,6 +30,14 @@ public class FractionTests
         Assert.AreEqual(expected, actual);
         Assert.AreEqual(expected, actual2);
         Assert.AreEqual(frac1 + frac2 + frac3, frac3 + expected);
+    }
+
+    [TestMethod]
+    public void WhenAFractionIsNegative_GCDShouldBePositive()
+    {
+        var fraction = new Fraction(-13, 19);
+
+        fraction.IsReduced.Should().BeTrue();
     }
 
     /// <summary>
@@ -362,7 +371,7 @@ public class FractionTests
     /// <returns></returns>
     public static IEnumerable<object[]> Squares()
     {
-        for (int i = 1; i < 20; i++)
+        for (int i = 1; i < 30; i++)
         {
             for (int j = 1; j < 20; j++)
             {

@@ -14,6 +14,21 @@ public class FractionClassConstructorTests
         var fraction = new Fraction(1, -5);
 
         fraction.Numerator.Sign.Should().BeNegative();
+        fraction.Denominator.Sign.Should().BePositive();
+    }
+
+    [TestMethod]
+    public void WhenInversingAFraction_SignOnDenominator_ShouldBePositive()
+    {
+        var fraction = new Fraction(1, -5);
+        var otherFraction = new Fraction(1, 3);
+
+        var result = fraction * otherFraction;
+
+        result.Denominator.Sign.Should().BePositive();
+        result.Numerator.Sign.Should().BeNegative();
+        result.IsReduced.Should().BeTrue();
+        result.IsProper.Should().BeTrue();
     }
 
     [TestMethod]

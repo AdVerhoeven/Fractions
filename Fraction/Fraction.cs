@@ -97,7 +97,7 @@ public struct Fraction : IComparable<Fraction>, IEquatable<Fraction>, IFormattab
     /// <summary>
     /// A reduced fraction is a simplified fraction, e.g. the biggest common factor is 1.
     /// </summary>
-    public bool IsReduced => GCD(this.numerator, this.denominator) == 1;
+    public bool IsReduced => GCD(BigInteger.Abs(this.numerator), this.denominator) == 1;
     #endregion
 
     #region Constructors
@@ -247,7 +247,8 @@ public struct Fraction : IComparable<Fraction>, IEquatable<Fraction>, IFormattab
 
     #region Methods
     /// <summary>
-    /// Simplifies a fraction by dividing the nominator and denominator by their greatest common divisor.
+    /// Simplifies a <see cref="Fraction"/> by dividing the <see cref="Numerator"/> and 
+    /// <see cref="Denominator"/> by their greatest common divisor.
     /// </summary>
     /// <param name="frac">The original <see cref="Fraction"/></param>
     /// <returns>A simplified or reduced <see cref="Fraction"/></returns>
@@ -317,7 +318,15 @@ public struct Fraction : IComparable<Fraction>, IEquatable<Fraction>, IFormattab
     /// </summary>
     /// <param name="a"></param>
     /// <param name="b"></param>
-    /// <returns></returns>
+    /// <returns>The greatest common divisor of <paramref name="a"/> and <paramref name="b"/></returns>
+    /// 
+    /// <remarks>
+    /// If <paramref name="a"/> or <paramref name="b"/> is negative, 
+    /// the gcd will be negative. This is not always a valid answer.
+    /// Instead of checking <paramref name="a"/> and <paramref name="b"/> 
+    /// for negative values in this recursive method,
+    /// make sure they are positive prior to calling this method, unless it is not of importance.
+    /// </remarks>
     private static BigInteger GCD(BigInteger a, BigInteger b)
     {
         if (a == 0)
