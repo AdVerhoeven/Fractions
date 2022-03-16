@@ -299,10 +299,16 @@ public struct Fraction : IComparable<Fraction>, IEquatable<Fraction>, IFormattab
     public override string ToString() => $"({Numerator} / {Denominator})";
 
     /// <summary>
-    /// Returns a fraction as "(a / b)" ("G" or "S") or "(a + b / c)" ("B").
+    /// Returns a fraction as <br/>"(a / b)", format string "G" or "S"<br/> 
+    /// or <br/>"(a + b / c)" format string "B"<br/>or<br/>"a" format string "H" 
     /// </summary>
-    /// <param name="format">S = full integers separately</param>
-    /// <returns></returns>
+    /// <param name="format">
+    /// "B" = full integers separately<br/>
+    /// "G" or "S" = default<br/>
+    /// "H" = only the integer part
+    /// </param>
+    /// <returns>The formatted string representation of the fraction</returns>
+    /// <remarks>Format strings are case-insensitive.</remarks>
     public string ToString(string format)
     {
         if (string.IsNullOrEmpty(format))
@@ -323,13 +329,16 @@ public struct Fraction : IComparable<Fraction>, IEquatable<Fraction>, IFormattab
                 sb.Append(this.Denominator);
                 sb.Append(')');
                 return sb.ToString();
+            case "H":
+                return $"{Numerator / Denominator}";
             default:
-                throw new FormatException(string.Format("The {0} format string is not supported.", format));
+                throw new FormatException($"The {format} format string is not supported.");
         }
     }
 
     /// <summary>
-    /// Not implemented do not use.
+    /// Not yet fully implemented.<br/>
+    /// <inheritdoc cref="ToString(string)"/>
     /// </summary>
     /// <param name="format"></param>
     /// <param name="formatProvider"></param>
