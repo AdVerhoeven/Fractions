@@ -345,11 +345,7 @@ public struct Fraction : IComparable<Fraction>, IEquatable<Fraction>, IFormattab
     /// <returns></returns>
     public string ToString(string? format, IFormatProvider? formatProvider)
     {
-        if (formatProvider == null && string.IsNullOrWhiteSpace(format))
-        {
-            return ToString();
-        }
-        if (!string.IsNullOrWhiteSpace(format))
+        if (formatProvider == null)
         {
             return ToString(format);
         }

@@ -9,7 +9,7 @@ namespace FractionLibraryTest;
 public class FractionClassConstructorTests
 {
     [TestMethod]
-    public void NegativeDenominatorShouldBePositiveAfterConstructorTest()
+    public void NegativeDenominator_ShouldBe_Positive_AfterConstructorTest()
     {
         var fraction = new Fraction(1, -5);
 
@@ -17,7 +17,7 @@ public class FractionClassConstructorTests
     }
 
     [TestMethod]
-    public void NegativeNumeratorAndDenominatorShouldBePositiveAfterConstructorTest()
+    public void NegativeNumerator_And_Denominator_ShouldBe_Positive_AfterConstructorTest()
     {
         var fraction = new Fraction(-3, -9);
 
@@ -26,7 +26,7 @@ public class FractionClassConstructorTests
     }
 
     [TestMethod]
-    public void FractionWithFractionAndIntegerTest()
+    public void Fraction_With_Fraction_And_Integer_ConstructorTest()
     {
         var expected = new Fraction(1, 3);
         var actual = new Fraction(expected, 1);
@@ -35,7 +35,7 @@ public class FractionClassConstructorTests
     }
 
     [TestMethod]
-    public void FractionWithIntegerAndFractionTest()
+    public void Fraction_With_Integer_And_Fraction_ConstructorTest()
     {
         var expected = new Fraction(1, 5);
         var actual = new Fraction(1, expected);
@@ -45,7 +45,7 @@ public class FractionClassConstructorTests
     }
 
     [TestMethod]
-    public void FractionFromContinuedFractionTest()
+    public void Fraction_FromContinuedFraction_ConstructorTest()
     {
         var denominatorSequence = new List<BigInteger>() { 1, 2 };
         (BigInteger, List<BigInteger>, bool) continuedFraction = new(1, denominatorSequence, true);

@@ -1,4 +1,5 @@
-﻿using FractionLibrary;
+﻿using FluentAssertions;
+using FractionLibrary;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Numerics;
 
@@ -13,7 +14,7 @@ public class FractionTests
     /// a + b + c = c + (b + a) = c + (a + b)
     /// </summary>
     [TestMethod]
-    public void AdditionTest()
+    public void Fraction_Addition_OperatorTest()
     {
         //Arrange
         var expected = Fraction.Identity;
@@ -37,7 +38,7 @@ public class FractionTests
     /// c + b = a
     /// </summary>
     [TestMethod]
-    public void SubtractionTest()
+    public void Fraction_Subtraction_OperatorTest()
     {
         //Arrange
         var expected = Fraction.Identity;
@@ -56,7 +57,7 @@ public class FractionTests
     /// Test multiplication rules
     /// </summary>
     [TestMethod]
-    public void MultiplicationTest()
+    public void Fraction_MultiplicationTest()
     {
         //Arrange
         var expected = new Fraction(1, 6);
@@ -77,7 +78,7 @@ public class FractionTests
     /// Test basic division rules
     /// </summary>
     [TestMethod]
-    public void DivisionTest()
+    public void Fraction_DivisionTest()
     {
         //Arrange
         var expected = new Fraction(1, 2);
@@ -95,7 +96,7 @@ public class FractionTests
     /// Test the Pow() method.
     /// </summary>
     [TestMethod]
-    public void PowerTest()
+    public void Fraction_PowerTest()
     {
         //Arrange
         var fraction = new Fraction(1, 5);
@@ -115,7 +116,7 @@ public class FractionTests
     /// Test the Sqrt() method. A very basic check wether the square root of 4 is 2.
     /// </summary>
     [TestMethod]
-    public void SqrtTest()
+    public void Fraction_SqrtTest()
     {
         //Arrange
         var expected = new Fraction(2, 1);
@@ -131,7 +132,7 @@ public class FractionTests
     /// Test if we can reverse the square of a fraction by taking the root
     /// </summary>
     [TestMethod]
-    public void FracPowToSqrtTest()
+    public void Fraction_FracPowToSqrtTest()
     {
         //Arrange
         var expected = new Fraction(1, 2);
@@ -151,7 +152,7 @@ public class FractionTests
     /// <param name="n"></param>
     [TestMethod]
     [DynamicData(nameof(GetPrimes), DynamicDataSourceType.Method)]
-    public void FracSqrtTest(int n)
+    public void Fraction_FracSqrtTest(int n)
     {
         //Arrange
         var expected = FractionMath.Sqrt(new Fraction(1, n));
@@ -203,7 +204,7 @@ public class FractionTests
     /// (x/y) = ~(y/x)
     /// </summary>
     [TestMethod]
-    public void InverseTest()
+    public void Fraction_InverseTest()
     {
         //Arrange
         var expected = new Fraction(2, 1);
@@ -217,17 +218,17 @@ public class FractionTests
     }
 
     [TestMethod]
-    public void EpsilonPITest()
+    public void Fraction_EpsilonPITest()
     {
         Assert.AreEqual(Math.PI, (double)FractionMath.PI, double.Epsilon);
     }
     [TestMethod]
-    public void EpsilonETest()
+    public void Fraction_EpsilonETest()
     {
         Assert.AreEqual(Math.E, (double)FractionMath.E, double.Epsilon);
     }
     [TestMethod]
-    public void EpsilonGoldenRatioTest()
+    public void Fraction_EpsilonGoldenRatioTest()
     {
         double goldenRatio = (1 + Math.Sqrt(5)) / 2;
         Assert.AreEqual(goldenRatio, (double)FractionMath.GoldenRatio, double.Epsilon);
@@ -238,7 +239,7 @@ public class FractionTests
     /// x to the power -1 = 1/x
     /// </summary>
     [TestMethod]
-    public void InverseAndPowerTest()
+    public void Fraction_InverseAndPowerTest()
     {
         //Arrange
         var expected = ~new Fraction(1, 5);
@@ -254,7 +255,7 @@ public class FractionTests
     /// Test wether multiplying or dividing with the Identity changes the fraction (should not happen).
     /// </summary>
     [TestMethod]
-    public void IdentityTest()
+    public void Fraction_IdentityTest()
     {
         //Arrange
         var expected = new Fraction(1, 11);
@@ -272,7 +273,7 @@ public class FractionTests
     /// Test implicit casting.
     /// </summary>
     [TestMethod]
-    public void ImplicitBigIntegerTest()
+    public void Fraction_ImplicitBigIntegerCast_OperatorTest()
     {
         //Arrange
         BigInteger bigint = 20;
@@ -289,7 +290,7 @@ public class FractionTests
     /// 
     /// </summary>
     [TestMethod]
-    public void ContinuedFractionTest()
+    public void Fraction_ContinuedFractionTest()
     {
         //Arrange
         var sequence = new List<BigInteger> { 0, 1, 2, 3 };
@@ -301,13 +302,14 @@ public class FractionTests
         //Assert
         // This test is mostly to test for divide by zero exceptions that could be thrown.
         Assert.IsNotNull(continuedFraction);
+        continuedFraction.Should().NotBeSameAs(new Fraction(0,1));
     }
 
     /// <summary>
     /// Test wether 0 remains 0 when taking its root. No exceptions should be thrown.
     /// </summary>
     [TestMethod]
-    public void SqrtOfZeroTest()
+    public void Fraction_SqrtOfZeroTest()
     {
         //Arrange
         var expected = 0;
@@ -324,7 +326,7 @@ public class FractionTests
     /// Test if convergent series converge as intended.
     /// </summary>
     [TestMethod]
-    public void SqrtOfTwoTest()
+    public void Fraction_SqrtOfTwoTest()
     {
         //Arrange
         //The fifth convergent of the continued fraction of the square root of 2
@@ -343,7 +345,7 @@ public class FractionTests
     /// </summary>
     [TestMethod]
     [DynamicData(nameof(Squares), DynamicDataSourceType.Method)]
-    public void PowerOfSqrtTest(int x, int y)
+    public void Fraction_PowerOfSqrtTest(int x, int y)
     {
         //Arrange
         var expected = new Fraction(x, y);
