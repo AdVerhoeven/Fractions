@@ -487,4 +487,16 @@ public struct Fraction : IComparable<Fraction>, IEquatable<Fraction>, IFormattab
     #endregion
 
     #endregion
+
+    #region Parse
+    public static bool TryParse(string value, out Fraction fraction)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static Fraction Parse(string value)
+    {
+        throw new NotImplementedException();
+    }
+    #endregion
 }
