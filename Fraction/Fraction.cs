@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Net.Http.Headers;
 using System.Numerics;
 using System.Text;
 
@@ -15,18 +16,18 @@ public struct Fraction : IComparable<Fraction>, IEquatable<Fraction>, IFormattab
 {
     #region Conversions
     // Implicit Convserions
-    public static implicit operator Fraction(BigInteger b) => new Fraction(b, 1);
-    public static implicit operator Fraction(int i) => new Fraction(i, 1);
+    public static implicit operator Fraction(BigInteger b) => new(b, 1);
+    public static implicit operator Fraction(int i) => new(i, 1);
 
     // NOTE: We do not really need these implicit conversions since it will not be used most of the time, it could however be added. 
     // BigIntegers have the implicit conversions so the BigInteger conversion should suffice for most situations.
-    public static implicit operator Fraction(uint ui) => new Fraction(ui, 1);
-    public static implicit operator Fraction(long l) => new Fraction(l, 1);
-    public static implicit operator Fraction(ulong ul) => new Fraction(ul, 1);
-    public static implicit operator Fraction(short s) => new Fraction(s, 1);
-    public static implicit operator Fraction(ushort us) => new Fraction(us, 1);
-    public static implicit operator Fraction(sbyte sb) => new Fraction(sb, 1);
-    public static implicit operator Fraction(byte b) => new Fraction(b, 1);
+    public static implicit operator Fraction(uint ui) => new(ui, 1);
+    public static implicit operator Fraction(long l) => new(l, 1);
+    public static implicit operator Fraction(ulong ul) => new(ul, 1);
+    public static implicit operator Fraction(short s) => new(s, 1);
+    public static implicit operator Fraction(ushort us) => new(us, 1);
+    public static implicit operator Fraction(sbyte sb) => new(sb, 1);
+    public static implicit operator Fraction(byte b) => new(b, 1);
 
     // Explicit conversions
     public static explicit operator BigInteger(Fraction f) => f.Numerator / f.Denominator;
@@ -65,6 +66,9 @@ public struct Fraction : IComparable<Fraction>, IEquatable<Fraction>, IFormattab
     /// <summary>
     /// The Denominator or bottom part of the fraction.
     /// </summary>
+    /// <remarks>
+    /// Can not be 0.
+    /// </remarks>
     public BigInteger Denominator
     {
         set
@@ -92,17 +96,24 @@ public struct Fraction : IComparable<Fraction>, IEquatable<Fraction>, IFormattab
     /// <summary>
     /// A proper fraction should have an absolute value of 1 or less.
     /// </summary>
-    public bool IsProper => BigInteger.Abs(this.Numerator) < this.Denominator;
+    public readonly bool IsProper => BigInteger.Abs(numerator) < denominator;
 
     /// <summary>
     /// A reduced fraction is a simplified fraction, e.g. the biggest common factor is 1.
     /// </summary>
-    public bool IsReduced => GCD(this.numerator, this.denominator) == 1;
+    public readonly bool IsReduced => GCD(numerator, denominator) == 1;
     #endregion
 
     #region Constructors
     /// <summary>
-    /// Default Constructor.
+    /// Default constructor.
+    /// Creates a new <see cref="Fraction"/> with value <see cref="Fraction.Identity"/>
+    /// </summary>
+    public Fraction() : this(1, 1)
+    {
+    }
+
+    /// <summary>
     /// Creates a fraction object. A denominator of 0 will throw a divide by zero exception.
     /// </summary>
     /// <param name="num">Numerator</param>
@@ -233,16 +244,16 @@ public struct Fraction : IComparable<Fraction>, IEquatable<Fraction>, IFormattab
     #region Arithmatic
     public static Fraction operator +(Fraction a, Fraction b)
 
-        => new Fraction(a.numerator * b.denominator + b.numerator * a.denominator, a.denominator * b.denominator);
+        => new(a.numerator * b.denominator + b.numerator * a.denominator, a.denominator * b.denominator);
 
     public static Fraction operator -(Fraction a, Fraction b)
 
-        => new Fraction(a.Numerator * b.Denominator - a.Denominator * b.Numerator, a.Denominator * b.Denominator);
+        => new(a.Numerator * b.Denominator - a.Denominator * b.Numerator, a.Denominator * b.Denominator);
 
 
     public static Fraction operator *(Fraction a, Fraction b)
 
-        => new Fraction(a.Numerator * b.Numerator, a.Denominator * b.Denominator);
+        => new(a.Numerator * b.Numerator, a.Denominator * b.Denominator);
 
 
     public static Fraction operator /(Fraction a, Fraction b) => a * ~b;
@@ -254,9 +265,9 @@ public struct Fraction : IComparable<Fraction>, IEquatable<Fraction>, IFormattab
     /// </summary>
     /// <param name="a"></param>
     /// <returns></returns>
-    public static Fraction operator ~(Fraction a) => new Fraction(a.denominator, a.numerator);
+    public static Fraction operator ~(Fraction a) => new(a.denominator, a.numerator);
 
-    public static Fraction operator -(Fraction a) => new Fraction(a.numerator * -1, a.denominator);
+    public static Fraction operator -(Fraction a) => new(a.numerator * -1, a.denominator);
 
     public static Fraction operator +(Fraction a) => a;
     #endregion
@@ -309,7 +320,7 @@ public struct Fraction : IComparable<Fraction>, IEquatable<Fraction>, IFormattab
     /// </param>
     /// <returns>The formatted string representation of the fraction</returns>
     /// <remarks>Format strings are case-insensitive.</remarks>
-    public string ToString(string format)
+    public string ToString(string? format)
     {
         if (string.IsNullOrEmpty(format))
             return ToString();
@@ -368,7 +379,7 @@ public struct Fraction : IComparable<Fraction>, IEquatable<Fraction>, IFormattab
         BigInteger denominator = this.Denominator;
         bool zero = false;
         // Keep a list of numerators once we passed the decimal separator to prevent calculating an ever repeating sequence.
-        List<BigInteger> numerators = new List<BigInteger>();
+        List<BigInteger> numerators = new();
 
         while (numerator != 0)
         {
@@ -491,12 +502,28 @@ public struct Fraction : IComparable<Fraction>, IEquatable<Fraction>, IFormattab
     #region Parse
     public static bool TryParse(string value, out Fraction fraction)
     {
-        throw new NotImplementedException();
+        fraction = new();
+        if (string.IsNullOrWhiteSpace(value))
+            return false;
+
+        var values = value.Trim('(').Trim(')').Trim().Split('/');
+        if (values.Length != 2)
+            return false;
+
+        if (BigInteger.TryParse(values[0], out BigInteger num) 
+            && BigInteger.TryParse(values[1],out BigInteger den))
+        {
+            fraction = new(num, den);
+            return true;
+        }
+        return false;
     }
 
     public static Fraction Parse(string value)
     {
-        throw new NotImplementedException();
+        if (TryParse(value, out Fraction result))
+            return result;
+        throw new ArgumentException($"Cannot parse {value} to a {nameof(Fraction)}");
     }
     #endregion
 }
