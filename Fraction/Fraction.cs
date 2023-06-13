@@ -230,9 +230,9 @@ public struct Fraction : IComparable<Fraction>, IEquatable<Fraction>, IFormattab
     /// <returns>A simplified or reduced <see cref="Fraction"/></returns>
     public Fraction Simplify()
     {
-        var gcd = GCD(this.Numerator, this.Denominator);
+        var gcd = GCD(Numerator, Denominator);
 
-        var ans = new Fraction(this.Numerator / gcd, this.Denominator / gcd);
+        var ans = new Fraction(Numerator / gcd, Denominator / gcd);
 
         return ans;
     }
@@ -329,15 +329,15 @@ public struct Fraction : IComparable<Fraction>, IEquatable<Fraction>, IFormattab
         {
             case "G":
             case "S":
-                return this.ToString();
+                return ToString();
             case "B":
                 var sb = new StringBuilder();
                 sb.Append('(');
-                sb.Append(this.Numerator / this.Denominator);
+                sb.Append(Numerator / Denominator);
                 sb.Append(" + ");
-                sb.Append(this.Numerator % this.Denominator);
+                sb.Append(Numerator % Denominator);
                 sb.Append(" / ");
-                sb.Append(this.Denominator);
+                sb.Append(Denominator);
                 sb.Append(')');
                 return sb.ToString();
             case "H":
@@ -372,11 +372,14 @@ public struct Fraction : IComparable<Fraction>, IEquatable<Fraction>, IFormattab
     /// <returns>A floating point string.</returns>
     public string ApproximateAsString(int lim = 18)
     {
+        // This is an edge case
+        if (Numerator == Denominator)
+            return "1";
         // 0. lim * x is the minimum amount of characters/digits in our result.
         var sb = new StringBuilder(lim + 2);
 
-        BigInteger numerator = this.Numerator;
-        BigInteger denominator = this.Denominator;
+        BigInteger numerator = Numerator;
+        BigInteger denominator = Denominator;
         bool zero = false;
         // Keep a list of numerators once we passed the decimal separator to prevent calculating an ever repeating sequence.
         List<BigInteger> numerators = new();
@@ -433,13 +436,13 @@ public struct Fraction : IComparable<Fraction>, IEquatable<Fraction>, IFormattab
     public int CompareTo(Fraction other)
     {
         // NOTE: this isn't fully required, however it can be much faster since it skips the division and modulo operations below.
-        if (this.denominator == other.denominator)
+        if (denominator == other.denominator)
         {
-            return this.numerator.CompareTo(other.numerator);
+            return numerator.CompareTo(other.numerator);
         }
-        var divThis = this.Numerator / this.Denominator;
+        var divThis = Numerator / Denominator;
         var divOther = other.Numerator / other.Denominator;
-        var remThis = this.Numerator % this.Denominator * this.Denominator;
+        var remThis = Numerator % Denominator * Denominator;
         var remOther = other.Numerator % other.Denominator * other.Denominator;
 
         // If the quotient of the fractions is equal...
@@ -480,7 +483,7 @@ public struct Fraction : IComparable<Fraction>, IEquatable<Fraction>, IFormattab
     #region Equals
     public bool Equals(Fraction other)
     {
-        var simplified = this.Simplify();
+        var simplified = Simplify();
         var simplifiedOther = other.Simplify();
         return simplified.Numerator == simplifiedOther.Numerator && simplified.Denominator == simplifiedOther.Denominator;
     }
@@ -489,12 +492,12 @@ public struct Fraction : IComparable<Fraction>, IEquatable<Fraction>, IFormattab
     {
         if (obj is Fraction frac)
         {
-            return this.Equals(frac);
+            return Equals(frac);
         }
         return base.Equals(obj);
     }
 
-    public override int GetHashCode() => this.ToString().GetHashCode();
+    public override int GetHashCode() => ToString().GetHashCode();
     #endregion
 
     #endregion
