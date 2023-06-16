@@ -382,7 +382,7 @@ public struct Fraction : IComparable<Fraction>, IEquatable<Fraction>, IFormattab
         BigInteger denominator = Denominator;
         bool zero = false;
         // Keep a list of numerators once we passed the decimal separator to prevent calculating an ever repeating sequence.
-        List<BigInteger> numerators = new();
+        Dictionary<BigInteger, ValueTuple<BigInteger, BigInteger>> numerators = new();
 
         while (numerator != 0)
         {
@@ -406,12 +406,24 @@ public struct Fraction : IComparable<Fraction>, IEquatable<Fraction>, IFormattab
                     // The remainder
                     BigInteger remainder = (numerator * 10) % denominator;
                     sb.Append(quotient.ToString());
-                    // To prevent doing continueing a endlessly repeating fraction (like 0.33...) add the current numerator to a list.
-                    numerators.Add(numerator);
-                    // Set the numerator to the remainder.
-                    numerator = remainder;
                     // We have just calculated one more digit behind the decimal separator
                     lim--;
+                    // To prevent doing continueing a endlessly repeating fraction (like 0.33...) add the current numerator to a list.
+                    if (!numerators.TryAdd(numerator, (quotient, remainder)))
+                    {
+                        //To prevent repeating the last digit of the repeating sequence.
+                        numerator = remainder;
+                        //Finish the repeating sequence.
+                        while(lim >= 1)
+                        {
+                            lim--;
+                            sb.Append(numerators[numerator].Item1);
+                            numerator = numerators[numerator].Item2;
+                        }
+                    }
+                    // Set the numerator to the remainder.
+                    numerator = remainder;
+
                     continue;
                 }
                 break;
@@ -513,8 +525,8 @@ public struct Fraction : IComparable<Fraction>, IEquatable<Fraction>, IFormattab
         if (values.Length != 2)
             return false;
 
-        if (BigInteger.TryParse(values[0], out BigInteger num) 
-            && BigInteger.TryParse(values[1],out BigInteger den))
+        if (BigInteger.TryParse(values[0], out BigInteger num)
+            && BigInteger.TryParse(values[1], out BigInteger den))
         {
             fraction = new(num, den);
             return true;

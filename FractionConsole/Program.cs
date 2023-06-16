@@ -4,7 +4,7 @@ using System.Numerics;
 
 
 Console.WriteLine("A quick start to show how precise this class can be. We calculate the root of 3 and cast at different moments");
-Console.WriteLine();
+Console.WriteLine(new Fraction(1,7).ApproximateAsString());
 
 #region SquareRoot and formatting
 var rootThreeFrac = FractionMath.Sqrt(3);
